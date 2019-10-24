@@ -139,14 +139,14 @@ html, body {
                 #link3 i {
                     color: #FFF;
                     font-size: 70px;
-                    -webkit-transform: rotate(100deg);
-                    -moz-transform: rotate(100deg);
-                    -ms-transform: rotate(100deg);
-                    -o-transform: rotate(100deg);
-                    transform: rotate(100deg);
+                    -webkit-transform: rotate(200deg);
+                    -moz-transform: rotate(200deg);
+                    -ms-transform: rotate(200deg);
+                    -o-transform: rotate(200deg);
+                    transform: rotate(200deg);
                     position: relative;
                     bottom: 12px;
-                    right: 5px;
+                    left: 30px;
                 }
 
 .mode-label {
