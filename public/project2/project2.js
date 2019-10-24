@@ -197,6 +197,16 @@ function stopTranslation() {
 // Computes the angles for inverse kinematics.
 function inverseKinematics(x_tip, y_tip) {
 	console.log("========== PRESSED BUTTON ===========");
+	var testanglevalue = getAngleOfEndpointFromBase(x_tip, y_tip);
+	console.log("===== Endpoint Angle:", testanglevalue, " ======");
+	
+	// Are we in glitch territory? (Within 125 pixels of the base point)
+	if (((x_tip*x_tip) + (y_tip*y_tip)) == (125*125)) {
+		// Yep. Handle this differently
+		inverseKinematics_special(x_tip, y_tip);
+		return;
+	}
+	// Else, continue as normal
 
 	//Length of each links
     var link1 = document.getElementById("link1").clientWidth; // 150
@@ -229,6 +239,12 @@ function inverseKinematics(x_tip, y_tip) {
 
     //Calculating theta_2 (the angle for the second link)
     var cos_2 = (delta - Math.pow(link1, 2) - Math.pow(link2, 2)) / (2 * link1 * link2);
+	// Quick sanity check: is cos_2 < -1? If so, ditch and go to the special case
+	if (cos_2 < -1.0) {
+		console.log("************* Invalid cos_2", cos_2, ", rerouting *************");
+		inverseKinematics_special(x_tip, y_tip);
+		return;
+	}
     var sin_2 = Math.sqrt(1 - Math.pow(cos_2, 2));
     var theta_2 = Math.atan2(sin_2, cos_2);
 
@@ -243,11 +259,9 @@ function inverseKinematics(x_tip, y_tip) {
 	
 	var theta_3 = phi - theta_1 - theta_2; // TODO: Use this value?
 	
-	// We have theta_1 (angle for link1 in radians)
-	// and theta_2 (angle for link2 in radians)
-	// I have an idea for handling the angle of the third link, but
-	// it's not necessary for now.
-	
+	// We have theta_1 (angle for link1 in radians),
+	// theta_2 (angle for link2 in radians), and
+	// theta_3 (angle for link3 in radians).
 	// Set these angles to the link pieces
 	
 	changeAngle(3, theta_3);
@@ -262,6 +276,70 @@ function inverseKinematics(x_tip, y_tip) {
 	console.log("Target angle:", phi);
 	console.log("Actual angle:", newAngle);
 	console.log("Error:", Math.abs(phi-newAngle));
+}
+
+// Computes the angles for a special case with inverse kinematics.
+function inverseKinematics_special(x_tip, y_tip) {
+	// Here, we're making a triangle.
+	// The sides of this triangle are (link1), (link2 + link3), and their hypotenuse.
+	
+	// We want to find the three angles using the law of cosines
+	// https://www.mathsisfun.com/algebra/trig-solving-sss-triangles.html
+	// cos(angle C) = (a^2 + b^2 - c^2) / (2ab)
+	
+	// To start with, define the sides:
+	var a = document.getElementById("link1").clientWidth; // 150
+    var b = document.getElementById("link2").clientWidth + document.getElementById("link3").clientWidth; // 175
+    var c = Math.sqrt(x_tip*x_tip + y_tip*y_tip); // Distance between endpoint and base
+	
+	console.log("(a, b, c): (", a, ",", b, ",", c, ")");
+	
+	// Now we want to find the angles A, B, and C using the law of cosines.
+	var angleC = Math.acos( ((a*a) + (b*b) - (c*c)) / (2 * a * b) ); // Angle between link1 and link2
+	var angleA = Math.acos( ((b*b) + (c*c) - (a*a)) / (2 * b * c) ); // Angle between link2/3 and "link4"
+	var angleB = Math.acos( ((c*c) + (a*a) - (b*b)) / (2 * c * a) ); // Angle between link1 and "link4"
+	// "link4" refers to c, or the distance between the endpoint and the base.
+	// Pretend the endpoint and the base had a string pulled taut between them.
+	
+	console.log("(angleA, angleB, angleC): (", angleA * (180/Math.PI), ",", angleB * (180/Math.PI), ",", angleC * (180/Math.PI), ")");
+	
+	// We have the shape of the triangle to set to the arm.
+	// Now we need to rotate the arm so the endpoint is in the right place,
+	// and that involves a rotation on link1.
+	
+	// Get the angle of the endpoint from the base:
+	var endpointAngle = getAngleOfEndpointFromBase(x_tip, y_tip);
+	
+	// The total angle of link1 is endpointAngle - angleB
+	var link1Angle = endpointAngle - angleB;
+	
+	console.log("Endpoint angle:", endpointAngle);
+	console.log("link1 angle:", link1Angle);
+	
+	// If this angle is less than -180, add 360 to flip it around.
+	if (link1Angle <= -(Math.PI)) {
+		link1Angle += 2*Math.PI; // Fix the angle
+		console.log("link1 angle:", link1Angle, "(added 2PI)");
+	}
+	
+	// Adjust the link1 and link2 angle to react properly
+	console.log("Old angleC:     ", angleC);
+	var link2Angle = Math.PI - angleC;
+	console.log("Adjusted angleC:", link2Angle);
+	
+	// We now have the three angles. Set them to the links
+	changeAngle(1, link1Angle);
+	changeAngle(2, link2Angle);
+	changeAngle(3, 0); // To treat link2 and link3 as one solid length
+	
+	// Don't forget to move the tip!
+	moveTip();
+}
+
+// Gets the angle between the endpoint and the base in radians.
+function getAngleOfEndpointFromBase(x_tip, y_tip) {
+	var angle = Math.atan2(y_tip, x_tip);
+	return angle;
 }
 
 // Sets the angle of the given link to the given angle.
