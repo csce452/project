@@ -149,10 +149,7 @@ function getTipOffsetFromBasePoint() {
 
 // Translates vertically with inverse kinematics.
 function verticalTranslation(n) {
-    var tip = document.getElementById('link3');
-	var base = document.getElementById('link1');
-	
-	// Get the current co-ords from the origin
+    // Get the current co-ords from the origin
 	var currentLength = getTipOffsetFromBasePoint();
 	var newLength = getTipOffsetFromBasePoint();
 
@@ -164,16 +161,13 @@ function verticalTranslation(n) {
 		// If valid, we're now targetting (x, new_y).
 		inverseKinematics(newLength.x, newLength.y);
 	} else {
-		console.log("Failed");
+		console.log("!!! Can't reach that location! Translation cancelled");
 	}
 }
 
 // Translates horizontally with inverse kinematics.
 function horizontalTranslation(n) {
-    var tip = document.getElementById('link3');
-	var base = document.getElementById('link1');
-	
-	// Get the current co-ords from the origin
+    // Get the current co-ords from the origin
 	var currentLength = getTipOffsetFromBasePoint();
 	var newLength = getTipOffsetFromBasePoint();
 
@@ -185,7 +179,7 @@ function horizontalTranslation(n) {
 		// If valid, we're now targetting (new_x, y).
 		inverseKinematics(newLength.x, newLength.y);
 	} else {
-		console.log("Failed");
+		console.log("!!! Can't reach that location! Translation cancelled");
 	}
 }
 
@@ -196,10 +190,6 @@ function stopTranslation() {
 
 // Computes the angles for inverse kinematics.
 function inverseKinematics(x_tip, y_tip) {
-	console.log("========== PRESSED BUTTON ===========");
-	var testanglevalue = getAngleOfEndpointFromBase(x_tip, y_tip);
-	console.log("===== Endpoint Angle:", testanglevalue, " ======");
-	
 	// Are we in glitch territory? (Within 125 pixels of the base point)
 	if (((x_tip*x_tip) + (y_tip*y_tip)) == (125*125)) {
 		// Yep. Handle this differently
@@ -208,7 +198,7 @@ function inverseKinematics(x_tip, y_tip) {
 	}
 	// Else, continue as normal
 
-	//Length of each links
+	// Length of each link
     var link1 = document.getElementById("link1").clientWidth; // 150
     var link2 = document.getElementById("link2").clientWidth; // 100
     var link3 = document.getElementById("link3").clientWidth; // 75
@@ -220,46 +210,35 @@ function inverseKinematics(x_tip, y_tip) {
     //The X and Y location of the base
     var basePoint = getBasePoint();
 
-    console.log("x_base:", basePoint.x, "y_base:", basePoint.y);
-    console.log("x_tip: ", x_tip, "y_tip: ", y_tip);
-	
-	// Desired angle for the end effector:
+    // Desired angle for the end effector:
 	// Target angle for the sum of the link angles
-	var phi = Math.atan2(y_tip, x_tip); // getCurrentAngle(links[2]); // Should be in degrees
-	console.log("Current angle: ", currentAngle);
-	console.log("Target angle:", phi);
-
-    //Inverse kinematics calculations from this point down
+	var phi = Math.atan2(y_tip, x_tip);
+	
+    // Inverse kinematics calculations from this point down
     var delta_x = x_tip - (link3 * Math.cos(phi));
     var delta_y = y_tip - (link3 * Math.sin(phi));
 	
     var delta = Math.pow(delta_x, 2) + Math.pow(delta_y, 2);
     
-    console.log("phi:", phi, "delta_x:", delta_x, "delta_y:", delta_y, "delta:", delta);
-
-    //Calculating theta_2 (the angle for the second link)
+    // Calculating theta_2 (the angle for the second link)
     var cos_2 = (delta - Math.pow(link1, 2) - Math.pow(link2, 2)) / (2 * link1 * link2);
 	// Quick sanity check: is cos_2 < -1? If so, ditch and go to the special case
 	if (cos_2 < -1.0) {
-		console.log("************* Invalid cos_2", cos_2, ", rerouting *************");
 		inverseKinematics_special(x_tip, y_tip);
 		return;
 	}
     var sin_2 = Math.sqrt(1 - Math.pow(cos_2, 2));
     var theta_2 = Math.atan2(sin_2, cos_2);
 
-    console.log("cos_2:", cos_2, "sin_2:", sin_2, "theta_2:", theta_2);
-
-    //Calculating theta_1 (the angle for the first link)
+    // Calculating theta_1 (the angle for the first link)
     var sin_1 = ((link1+link2*cos_2)*delta_y - link2*sin_2*delta_x) / delta;
     var cos_1 = ((link1+link2*cos_2)*delta_x + link2*sin_2*delta_y) / delta;
     var theta_1 = Math.atan2(sin_1, cos_1);
 
-    console.log("cos_1:", cos_1, "sin_1:", sin_1, "theta_1:", theta_1);
+	// Calculating theta_3, which is just simple subtraction
+	var theta_3 = phi - theta_1 - theta_2;
 	
-	var theta_3 = phi - theta_1 - theta_2; // TODO: Use this value?
-	
-	// We have theta_1 (angle for link1 in radians),
+	// We now have theta_1 (angle for link1 in radians),
 	// theta_2 (angle for link2 in radians), and
 	// theta_3 (angle for link3 in radians).
 	// Set these angles to the link pieces
@@ -267,15 +246,7 @@ function inverseKinematics(x_tip, y_tip) {
 	changeAngle(3, theta_3);
 	changeAngle(2, theta_2);
 	changeAngle(1, theta_1);
-	moveTip();
-
-	var newPosition = getTipOffsetFromBasePoint();
-	var newAngle = Math.atan2(newPosition.y, newPosition.x);
-
-	console.log("========== TRANSLATION SUMMARY ===========");
-	console.log("Target angle:", phi);
-	console.log("Actual angle:", newAngle);
-	console.log("Error:", Math.abs(phi-newAngle));
+	moveTip(); // The tip must be moved after the fact
 }
 
 // Computes the angles for a special case with inverse kinematics.
@@ -292,16 +263,12 @@ function inverseKinematics_special(x_tip, y_tip) {
     var b = document.getElementById("link2").clientWidth + document.getElementById("link3").clientWidth; // 175
     var c = Math.sqrt(x_tip*x_tip + y_tip*y_tip); // Distance between endpoint and base
 	
-	console.log("(a, b, c): (", a, ",", b, ",", c, ")");
-	
 	// Now we want to find the angles A, B, and C using the law of cosines.
 	var angleC = Math.acos( ((a*a) + (b*b) - (c*c)) / (2 * a * b) ); // Angle between link1 and link2
 	var angleA = Math.acos( ((b*b) + (c*c) - (a*a)) / (2 * b * c) ); // Angle between link2/3 and "link4"
 	var angleB = Math.acos( ((c*c) + (a*a) - (b*b)) / (2 * c * a) ); // Angle between link1 and "link4"
 	// "link4" refers to c, or the distance between the endpoint and the base.
 	// Pretend the endpoint and the base had a string pulled taut between them.
-	
-	console.log("(angleA, angleB, angleC): (", angleA * (180/Math.PI), ",", angleB * (180/Math.PI), ",", angleC * (180/Math.PI), ")");
 	
 	// We have the shape of the triangle to set to the arm.
 	// Now we need to rotate the arm so the endpoint is in the right place,
@@ -313,19 +280,13 @@ function inverseKinematics_special(x_tip, y_tip) {
 	// The total angle of link1 is endpointAngle - angleB
 	var link1Angle = endpointAngle - angleB;
 	
-	console.log("Endpoint angle:", endpointAngle);
-	console.log("link1 angle:", link1Angle);
-	
 	// If this angle is less than -180, add 360 to flip it around.
 	if (link1Angle <= -(Math.PI)) {
 		link1Angle += 2*Math.PI; // Fix the angle
-		console.log("link1 angle:", link1Angle, "(added 2PI)");
 	}
 	
 	// Adjust the link1 and link2 angle to react properly
-	console.log("Old angleC:     ", angleC);
 	var link2Angle = Math.PI - angleC;
-	console.log("Adjusted angleC:", link2Angle);
 	
 	// We now have the three angles. Set them to the links
 	changeAngle(1, link1Angle);
@@ -369,11 +330,8 @@ function moveTip() {
 	var link2r = link2.clientWidth;
 	var link3r = link3.clientWidth;
 
-	// Detemine the angle of base to tip
-	var theta = link1a + link2a + link3a;
 	var rx = link1r * Math.cos(link1a) + link2r * Math.cos(link1a + link2a) + link3r * Math.cos(link1a + link2a + link3a);
 	var ry = link1r * Math.sin(link1a) + link2r * Math.sin(link1a + link2a) + link3r * Math.sin(link1a + link2a + link3a);
-	// var r = Math.sqrt(rx*rx + ry*ry);
 	
 	var jointcss = "left: "+rx+"px ; top: " + ry + "px;";
 	
