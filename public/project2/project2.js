@@ -106,7 +106,10 @@ function bloop() {
             dot.style.position = "absolute";
         
             var position = $(document.getElementById('tip')).offset();
-            var new_pos = $(dot).css(position)
+            var new_pos = $(dot).css({
+                top: position.top-5,
+                left: position.left
+            });
         
             var x = new_pos.left;
             var y = new_pos.top;
