@@ -1,6 +1,7 @@
 var links;
 var buttons;
 var turn;
+var move;
 var paint;
 var currentlyPainting;
 var instructions;
@@ -152,17 +153,19 @@ function verticalTranslation(n) {
     // Get the current co-ords from the origin
 	var currentLength = getTipOffsetFromBasePoint();
 	var newLength = getTipOffsetFromBasePoint();
-
-	// We're moving n
-	newLength.y += n;
 	
-	// Check to see if the new co-ordinates are attainable.
-	if (validate(newLength.y, newLength.x)) {
-		// If valid, we're now targetting (x, new_y).
-		inverseKinematics(newLength.x, newLength.y);
-	} else {
-		console.log("!!! Can't reach that location! Translation cancelled");
-	}
+	move = setInterval(function() {
+		// We're moving n
+		newLength.y += n;
+
+		// Check to see if the new co-ordinates are attainable.
+		if (validate(newLength.y, newLength.x)) {
+			// If valid, we're now targetting (x, new_y).
+			inverseKinematics(newLength.x, newLength.y);
+		} else {
+			console.log("!!! Can't reach that location! Translation cancelled");
+		}
+	}, 20);
 }
 
 // Translates horizontally with inverse kinematics.
@@ -171,21 +174,23 @@ function horizontalTranslation(n) {
 	var currentLength = getTipOffsetFromBasePoint();
 	var newLength = getTipOffsetFromBasePoint();
 
-	// We're moving n
-	newLength.x += n;
-	
-	// Check to see if the new co-ordinates are attainable.
-	if (validate(newLength.y, newLength.x)) {
-		// If valid, we're now targetting (new_x, y).
-		inverseKinematics(newLength.x, newLength.y);
-	} else {
-		console.log("!!! Can't reach that location! Translation cancelled");
-	}
+	move = setInterval(function() {
+		// We're moving n
+		newLength.x += n;
+
+		// Check to see if the new co-ordinates are attainable.
+		if (validate(newLength.y, newLength.x)) {
+			// If valid, we're now targetting (new_x, y).
+			inverseKinematics(newLength.x, newLength.y);
+		} else {
+			console.log("!!! Can't reach that location! Translation cancelled");
+		}
+  	}, 20);
 }
 
 // Stops a translation.
 function stopTranslation() {
-
+    if (move) clearInterval(move);
 }
 
 // Computes the angles for inverse kinematics.
