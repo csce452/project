@@ -25,20 +25,77 @@ html, body {
     border-top-left-radius: 50%;
     border-top-right-radius: 50%;
     border: 1px solid #FFF;
+	line-height: 48px;
+	margin: 0 25px;
+	text-align: center;
 }
-    .link {
-        border-radius: 70%;
-        border: 1px solid #FFF;
+    #base-pos{
+       /* position: absolute; */
+        width: 10px;
+        height: 10px;
+      /*  top: 40%;
+        left: 40%; */
+        border-radius: 50%;
+        background-color: #000;
+        z-index: 999999;
+		display: inline-block;
     }
 
-    #link1 {
-        height: 150px;
-        width: 25px;
+	#tip {
+		left: 325px;
+		position: relative;
+		top: 0px;
+	}
+
+	#invis {
         position: relative;
-        top: -250%;
-        left: 25%;
-        background-color: #500000;
-        transform-origin: bottom center;
+        top: 0%;
+        left: 100%;
+	}
+
+	.circle {
+		position: relative;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background-color: #FFF;
+	}
+	
+	.tip {
+		width: 10px;
+		height: 10px;
+		/* left: 70px; */
+		border-radius: 50%;
+		background-color: #000;
+		z-index: 9999;
+	}
+
+    .link-style {
+        border-radius: 70%;
+        border: 1px solid #FFF;
+		background-color: #500000;
+    }
+
+	.fill {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+
+	.link {
+		z-index: 9999;
+		/* transition: all 0.05s ease-in-out; */
+	}
+
+    #link1 {
+        height: 25px;
+        width: 150px;
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform-origin: center left;
         -webkit-transform: rotate(0deg);
         -moz-transform: rotate(0deg);
         -ms-transform: rotate(0deg);
@@ -47,13 +104,14 @@ html, body {
     }
 
         #link2 {
-            height: 100px;
-            width: 25px;
+            height: 25px;
+            width: 100px;
             position: relative;
-            top: -67%;
-            left: 0%;
-            background-color: #500000;
-            transform-origin: bottom center;
+			margin-top: 1px;
+            top: 0%;
+            left: 100%;
+           /* background-color: #500000; */
+            transform-origin: center left;
             -webkit-transform: rotate(0deg);
             -moz-transform: rotate(0deg);
             -ms-transform: rotate(0deg);
@@ -62,50 +120,33 @@ html, body {
         }
 
             #link3 {
-                height: 75px;
-                width: 25px;
+                height: 25px;
+                width: 75px;
                 position: relative;
-                top: -73%;
-                left: 0%;
-                background-color: #500000;
-                transform-origin: bottom center;
+			
+                top: 0%;
+                left: 100%;
+				margin-top: -1px;
+              /*  background-color: #500000; */
+                transform-origin: center left;
                 -webkit-transform: rotate(0deg);
                 -moz-transform: rotate(0deg);
                 -ms-transform: rotate(0deg);
                 -o-transform: rotate(0deg);
                 transform: rotate(0deg);
             }
-                .circle {
-                    position: relative;
-                    width: 10px;
-                    height: 10px;
-                    left: 8px;
-                    top: -10px;
-                    border-radius: 50%;
-                    background-color: #FFF;
-                }
-                
-                .tip {
-                    position: relative;
-                    width: 10px;
-                    height: 10px;
-                    left: 6px;
-                    border-radius: 50%;
-                    background-color: #000;
-                    z-index: 9999;
-                }
 
                 #link3 i {
                     color: #FFF;
                     font-size: 70px;
-                    -webkit-transform: rotate(100deg);
-                    -moz-transform: rotate(100deg);
-                    -ms-transform: rotate(100deg);
-                    -o-transform: rotate(100deg);
-                    transform: rotate(100deg);
+                    -webkit-transform: rotate(200deg);
+                    -moz-transform: rotate(200deg);
+                    -ms-transform: rotate(200deg);
+                    -o-transform: rotate(200deg);
+                    transform: rotate(200deg);
                     position: relative;
                     bottom: 12px;
-                    right: 5px;
+                    left: 30px;
                 }
 
 .mode-label {

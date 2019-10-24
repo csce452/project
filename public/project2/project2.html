@@ -26,11 +26,20 @@
                 <div class="row h-100">
                     <div id="window" class="col-lg-8">
                         <div id="base">
-                            <div id="link1" class="link ">
-                                <div id="link2" class="link ">
+                            <!-- <div id="base-pos"></div> -->
+                            <div id="base-pos">
+								<div id="tip" class="tip"></div>
+							</div>
+							<div id="link1" class="link">
+								<div class="link-style fill"></div>
+                                <div id="link2" class="link">
+									<div class="link-style fill"></div>
                                     <div id="link3" class="link">
-                                        <div id="tip" class="tip"></div>
-                                        <!-- <i class="fa fa-paint-brush" aria-hidden="true"></i> -->
+									<div class="link-style fill"></div>
+										<div id="invis">
+											<!-- <div id="tip" class="tip"></div> -->
+										</div>
+                                        <i class="fa fa-paint-brush" aria-hidden="true"></i>
                                     </div>
                                 </div>
                             </div>
@@ -99,12 +108,12 @@
                                 </div>
                                 <div class="row h-25 align-content-center">
                                     <div class="col-lg-6 text-center">
-                                        <button class="dir-button" onmousedown="horizontalTranslation(-1)">
+                                        <button class="dir-button" onmousedown="horizontalTranslation(-1)" onmouseup="stopTranslation()">
                                             <i class="fa fa-chevron-left" aria-hidden="true"></i>
                                         </button>
                                     </div>
                                     <div class="col-lg-6 text-center">
-                                        <button class="dir-button" onmousedown="horizontalTranslation(1)">
+                                        <button class="dir-button" onmousedown="horizontalTranslation(1)" onmouseup="stopTranslation()">
                                             <i class="fa fa-chevron-right" aria-hidden="true"></i>
                                         </button>
                                     </div>
