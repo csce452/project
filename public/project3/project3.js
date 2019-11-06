@@ -85,28 +85,8 @@ class Vehicle {
   run() {
     var vehicle = document.getElementById(this.id);
 
-    var minDistance = 99999;
-    var minIndex = 0;
-
-    for(var i = 0; i < lights.length; i++) {
-      var calculated_distance = this.getDistanceFromLightSource(i);
-      if(calculated_distance < minDistance) {
-        minDistance = calculated_distance;
-        minIndex = i;
-      }
-    }
-
-    this.desired_distance = minDistance;
-
-    var x_of_light = lights[minIndex].x;
-    var y_of_light = lights[minIndex].y;
-
-    var dx = x_of_light - vehicle.getBoundingClientRect().x;
-    var dy = y_of_light - vehicle.getBoundingClientRect().y;
-
-    var angle = Math.atan2(dy,  dx) / Math.PI * 180;
-    this.desired_angle = angle;
-
+    this.getDistanceFromLightSource();
+    
     var self = this;
     var counter = 0;
 
@@ -145,13 +125,41 @@ class Vehicle {
     The remaining two functions in the Vehicle class are self-explanatory  
   */
   getDistanceFromLightSource(index) {
-    var x_of_light = lights[index].x;
-    var y_of_light = lights[index].y;
+    var vehicle = document.getElementById(this.id);
 
+    var minDistance = 99999;
+    var minIndex = 0;
     var x_of_vehicle = this.x;
     var y_of_vehicle = this.y;
 
-    return Math.sqrt(Math.pow(x_of_light - x_of_vehicle, 2) + Math.pow(y_of_light - y_of_vehicle, 2));
+    for(var i = 0; i < lights.length; i++) {
+      var x_of_light = lights[i].x;
+      var y_of_light = lights[i].y;
+      var x_of_vehicle = vehicle.getBoundingClientRect().x;
+      var y_of_vehicle = vehicle.getBoundingClientRect().y;
+
+      var calculated_distance = Math.sqrt(Math.pow(x_of_light - x_of_vehicle, 2) + Math.pow(y_of_light - y_of_vehicle, 2));
+      if(calculated_distance < minDistance) {
+        minDistance = calculated_distance;
+        minIndex = i;
+      }
+    }
+
+    this.desired_distance = minDistance;
+    this.getAngleOfClosestLightSource(minIndex);
+  }
+
+  getAngleOfClosestLightSource(minIndex) {
+    var vehicle = document.getElementById(this.id);
+
+    var x_of_light = lights[minIndex].x;
+    var y_of_light = lights[minIndex].y;
+
+    var dx = x_of_light - vehicle.getBoundingClientRect().x;
+    var dy = y_of_light - vehicle.getBoundingClientRect().y;
+
+    var angle = Math.atan2(dy,  dx) / Math.PI * 180;
+    this.desired_angle = angle;
   }
 
   getRandomColor() {
@@ -195,6 +203,10 @@ function letThereBeLight(event) {
 
   var light = new Light([x, y]);
   lights.push(light);
+
+  for(var i = 0; i < vehicles.length; i++) {
+    vehicles[i].getDistanceFromLightSource();
+  }
 }
 
 /*
