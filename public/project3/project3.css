@@ -21,7 +21,7 @@ html, body {
     }
 
     #window .vehicle {
-        position: fixed;
+        position: relative;
         height: 50px;
         width: 70px;
         background-color: #FFF;

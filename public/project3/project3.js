@@ -3,20 +3,19 @@ vehicles = []
 
 class Vehicle {
 
-  constructor(pos) {
+  constructor(pos, id_) {
+    this.id = id_;
     this.x = pos[0];
     this.y = pos[1];
+    this.desired_distance = 0;
+    this.current_distance = 0;
+    this.desired_angle = 0;
+    this.current_angle = 0;
   }
 
-  getRandomColor() {
-    var letters = '0123456789ABCDEF';
-    var color = '#';
-    for (var i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  }
-
+  /*
+    This was just my touch. Don't have to worry about this function.
+  */
   drawVehicleInControlPanel() {
     var newVehicle = document.createElement("div");
     newVehicle.classList.add("vehicle", "text-center");
@@ -38,11 +37,28 @@ class Vehicle {
     this.drawVehicleInWindow(color);
   }
 
+  /*
+    - Creates a container for the starting point of the vehicle
+    - This is the element that rotates rather than the vehicle
+      - If the vehicle rotates itself, we have to keep recalculating
+        for x and y
+      - Rather, just have the parent element rotate and just increase
+        x accordingly
+    - Also attached some sensors on the vehicle drawing
+  */
   drawVehicleInWindow(color) {
+
+    var newVehicleContainer = document.createElement('div');
+    newVehicleContainer.id = `vehicle-container-${this.id}`;
+    newVehicleContainer.style.position = "fixed";
+    newVehicleContainer.style.left = this.x + "px";
+    newVehicleContainer.style.top = this.y + "px";
+    newVehicleContainer.style.width = 100 + "px";
+    newVehicleContainer.style.height = 100 + "px";
+
     var newVehicle = document.createElement('div');
     newVehicle.className = 'vehicle';
-    newVehicle.style.left = this.x + "px";
-    newVehicle.style.top = this.y + "px";
+    newVehicle.id = this.id;
     newVehicle.style.backgroundColor = color;
 
     var leftSensor = document.createElement("div");
@@ -53,7 +69,98 @@ class Vehicle {
     newVehicle.append(leftSensor);
     newVehicle.append(rightSensor);
 
-    document.getElementById('window').appendChild(newVehicle);
+    newVehicleContainer.append(newVehicle);
+    document.getElementById('window').appendChild(newVehicleContainer);
+  }
+
+  /*
+    - Desired angle and desired distance is calculated
+      - Desired distance is distance from the vehicle to the closest light
+      - Desired angle is the angle pointing the vehicle to the light
+      - The current distance gets incremented each interation starting from 0
+      - The current andle gets incremented each iteration starting from 0
+    - The vehicle will only move until it reaches its desired distance
+    - The vehicle will only turn until it reaches its desired angle
+  */
+  run() {
+    var vehicle = document.getElementById(this.id);
+
+    var minDistance = 99999;
+    var minIndex = 0;
+
+    for(var i = 0; i < lights.length; i++) {
+      var calculated_distance = this.getDistanceFromLightSource(i);
+      if(calculated_distance < minDistance) {
+        minDistance = calculated_distance;
+        minIndex = i;
+      }
+    }
+
+    this.desired_distance = minDistance;
+
+    var x_of_light = lights[minIndex].x;
+    var y_of_light = lights[minIndex].y;
+
+    var dx = x_of_light - vehicle.getBoundingClientRect().x;
+    var dy = y_of_light - vehicle.getBoundingClientRect().y;
+
+    var angle = Math.atan2(dy,  dx) / Math.PI * 180;
+    this.desired_angle = angle;
+
+    var self = this;
+    var counter = 0;
+
+    setInterval(function() {
+
+      /******************************** TO DO ************************************/
+
+      // "counter" rate and "self.current_angle" rate must be proportional
+      // Play around by changing these values
+      // So far I have it at .2 and 1.1 respectively
+        // These values only work for some cases
+      // For "self.current_angle" it must be exponential (faster as it gets closer to the light)
+        // right now it's just constant
+      counter += .2;
+
+      // I subtracted 150 from the desired distance travelled because
+      // if not, it always passes the light
+      if(self.current_distance < self.desired_distance-150) {
+        vehicle.style.left = `${parseInt(self.current_distance) + counter}px`;
+        self.current_distance = parseInt(self.current_distance) + counter;
+      }
+
+      if (self.current_angle < self.desired_angle) {
+        var vehicleContainer = document.getElementById(`vehicle-container-${self.id}`);
+        vehicleContainer.style.transform = `rotate(${self.current_angle}deg)`;
+        self.current_angle += 1.1;
+      }
+
+
+      /***************************** END TO DO ************************************/
+
+    }, 80);
+  }
+
+  /*
+    The remaining two functions in the Vehicle class are self-explanatory  
+  */
+  getDistanceFromLightSource(index) {
+    var x_of_light = lights[index].x;
+    var y_of_light = lights[index].y;
+
+    var x_of_vehicle = this.x;
+    var y_of_vehicle = this.y;
+
+    return Math.sqrt(Math.pow(x_of_light - x_of_vehicle, 2) + Math.pow(y_of_light - y_of_vehicle, 2));
+  }
+
+  getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
   }
 }
 
@@ -66,6 +173,9 @@ class Light {
     this.createLight();
   }
 
+  /*
+    - Draws the light source at the window panel
+  */
   createLight() {
     this.element = document.createElement('div');
     this.element.className = 'light';
@@ -75,6 +185,10 @@ class Light {
   }
 }
 
+/*
+  - The function that gets called when someone hovers and clicks on the Window panel
+  - Instantiates light object which will draw it on the window panel
+*/
 function letThereBeLight(event) {
   var x = event.screenX;
   var y = event.screenY;
@@ -83,12 +197,29 @@ function letThereBeLight(event) {
   lights.push(light);
 }
 
+/*
+  - The function that gets called when someone adds a new vehicle
+  - Instantiates vehicle object which will draw it on the window panel and control panel
+*/
 function letThereBeVehicle(event) {
   
   var x = document.getElementById('x-input').value;
   var y = document.getElementById('y-input').value;
-  var vehicle = new Vehicle([x, y]);
 
+  // I decided that 30 looks like a good default value for x and y when
+  // there is no input. I need there to be a value in order to calculate distance
+  if (x.length == 0 && y.length == 0) {
+    x = 30;
+    y = 30;
+  } else if (x.length == 0) {
+    x = 30;
+  } else if (y.length == 0) {
+    y = 30;
+  }
+
+  var vehicle = new Vehicle([parseInt(x), parseInt(y)],`vehicle-${vehicles.length}`);
+
+  // Everything below this line creates a row div and a col div (not important)
   var vehicle_rows_container = document.getElementById("vehicle-rows-container");
   var newRow = document.createElement("div");
   newRow.className = "row";
@@ -105,7 +236,36 @@ function letThereBeVehicle(event) {
   vehicle_rows_container.insertBefore(newRow, vehicle_rows_container.childNodes[2]);
 
   vehicle.drawVehicleInControlPanel(vehicles.length-1);
+  vehicle.run();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // let vehicles = [];
 // let lights = [];
