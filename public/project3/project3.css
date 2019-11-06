@@ -3,6 +3,131 @@ html, body {
     width: 100vw;
 }
 
+#window {
+    height: 100%;
+    background-image: url("../assets/img/grid-lines.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    overflow: scroll;
+}
+
+    #window .light {
+        position: fixed;
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        background-color: #ffffd8;
+    }
+
+    #window .vehicle {
+        position: fixed;
+        height: 50px;
+        width: 70px;
+        background-color: #FFF;
+        z-index: 10;
+    }
+
+        #window .vehicle:before {
+            content: "........";
+            position: relative;
+            top: -20px;
+            left: -5px;
+            background-color: black;
+        }
+
+        #window .vehicle:after {
+            content: "........";
+            position: relative;
+            top: 20px;
+            left: -5px;
+            background-color: black;
+        }
+
+            #window .vehicle .lsensor {
+                position: absolute;
+                top: 10px;
+                left: 50px;
+                height: 10px;
+                width: 30px;
+                background-color: black;
+            }
+
+            #window .vehicle .rsensor {
+                position: absolute;
+                top: 30px;
+                left: 50px;
+                height: 10px;
+                width: 30px;
+                background-color: black;
+            }
+
+#control-panel {
+    height: 100%;
+    background-color:#500000;
+}
+
+    #control-panel h1 {
+        font-size: 30px;
+        color: #ffffff;
+        font-family: 'Permanent Marker', cursive;
+        text-align: center;
+    }
+
+    #control-panel .vehicle-row {
+        height: 150px;
+    }
+
+    .vehicle-row .vehicle {
+        position: relative;
+        top: 20%;
+        left: 40%;
+        height: 90px;
+        width: 100px;
+        background-color: #FFF;
+        z-index: 10;
+    }
+
+        .vehicle-row .vehicle:before {
+            content: ".............";
+            position: relative;
+            top: -20px;
+            left: -30px;
+            background-color: black;
+        }
+
+        .vehicle-row .vehicle:after {
+            content: ".............";
+            position: relative;
+            top: 60px;
+            left: -30px;
+            background-color: black;
+        }
+
+        .vehicle-row .vehicle .lsensor {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            height: 20px;
+            width: 50px;
+            background-color: black;
+        }
+
+        .vehicle-row .rsensor {
+            position: absolute;
+            top: 50px;
+            left: 70px;
+            height: 20px;
+            width: 50px;
+            background-color: black;
+        }
+
+
+/* html, body {
+    height: 100vh;
+    width: 100vw;
+}
+
 .vehicle {
   height: 50px;
   width: 50px;
@@ -50,11 +175,11 @@ html, body {
 	text-align: center;
 }
     #base-pos{
-       /* position: absolute; */
+       /* position: absolute;
         width: 10px;
         height: 10px;
       /*  top: 40%;
-        left: 40%; */
+        left: 40%;
         border-radius: 50%;
         background-color: #000;
         z-index: 999999;
@@ -84,7 +209,7 @@ html, body {
 	.tip {
 		width: 10px;
 		height: 10px;
-		/* left: 70px; */
+		/* left: 70px;
 		border-radius: 50%;
 		background-color: #000;
 		z-index: 9999;
@@ -106,7 +231,7 @@ html, body {
 
 	.link {
 		z-index: 9999;
-		/* transition: all 0.05s ease-in-out; */
+		/* transition: all 0.05s ease-in-out;
 	}
 
     #link1 {
@@ -130,7 +255,7 @@ html, body {
 			margin-top: 1px;
             top: 0%;
             left: 100%;
-           /* background-color: #500000; */
+           /* background-color: #500000;
             transform-origin: center left;
             -webkit-transform: rotate(0deg);
             -moz-transform: rotate(0deg);
@@ -147,7 +272,7 @@ html, body {
                 top: 0%;
                 left: 100%;
 				margin-top: -1px;
-              /*  background-color: #500000; */
+              /*  background-color: #500000;
                 transform-origin: center left;
                 -webkit-transform: rotate(0deg);
                 -moz-transform: rotate(0deg);
@@ -212,4 +337,4 @@ html, body {
 
 .dir-button i {
     font-size: 20px;
-}
+} */

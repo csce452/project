@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Project 2: TAMU PaintBot</title>
+    <title>Project 3: Braitenberg Vehicles</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="./project3.css">
@@ -19,7 +19,64 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
 </head>
 
-<body onkeypress="bloop()">
+<body>
+    <div class="container-fluid h-100">
+        <div class="row h-100">
+            <div class="col-lg-12">
+                <div class="row h-100">
+                    <div id="window" class="col-lg-8" onclick="letThereBeLight(event)">
+                    </div>
+                    <div id="control-panel" class="col-lg-4">
+                        <div class="row h-100">
+                            <div id="vehicle-rows-container" class="col-lg-12">
+                                <h1>Vehicles</h1>
+                                <div class="row vehicle-row align-content-center">
+                                    <div class="col-lg-12 text-center">
+                                        <form onsubmit="letThereBeVehicle(); return false;">
+                                            <div class="form-row align-items-center">
+                                                <div class="col-4">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <div class="input-group-text">x:</div>
+                                                            </div>
+                                                        <input class="form-control" id="x-input" placeholder="100"> 
+                                                    </div>  
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <div class="input-group-text">y:</div>
+                                                            </div>
+                                                        <input class="form-control" id="y-input" placeholder="100"> 
+                                                    </div>                                                   
+                                                </div>
+                                                <div class="col-4">
+                                                    <button>Add Vehicle</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+<!-- <body onkeypress="bloop()">
     <div class="container-fluid h-100">
         <div class="row h-100">
             <div class="col-lg-12">
@@ -118,6 +175,4 @@
             </div>
         </div>
     </div>
-</body>
-
-</html>
+</body> -->
