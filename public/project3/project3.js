@@ -1,11 +1,17 @@
 lights = []
 vehicles = []
+running = false;
+
+function getDistance(pos1, pos2) {
+  return Math.sqrt(Math.pow(pos1[0] - pos2[0],2 ) + Math.pow(pos1[1] - pos2[1], 2));
+}
 
 class Vehicle {
 
   constructor(pos) {
     this.x = pos[0];
     this.y = pos[1];
+    this.k = [1,1,1,1];
   }
 
   getRandomColor() {
@@ -55,6 +61,34 @@ class Vehicle {
 
     document.getElementById('window').appendChild(newVehicle);
   }
+
+  move () {
+    this.adjustHeading();
+  }
+
+  getSensors () {
+    let s1 = 0;
+    let s2 = 0;
+    lights.forEach(light => {
+      let lightPosition = [light.element.offsetLeft, light.element.offsetTop];
+      s1 += 100 / getDistance([this.x + 50, this.y + 10], lightPosition);
+      s2 += 100 / getDistance([this.x + 50, this.y + 30], lightPosition);
+    });
+    s1 /= lights.length;
+    s2 /= lights.length;
+    return [s1, s2];
+  }
+
+  adjustHeading () {
+    let s = this.getSensors();
+    console.log(s);
+    let v1 = this.k[0] * s[0] + this.k[1] * s[1];
+    let v2 = this.k[2] * s[0] + this.k[3] * s[1];
+    let w = (v1 - v2) / 40 // 40 is distance between wheels
+    console.log(w);
+  }
+
+
 }
 
 class Light {
@@ -105,6 +139,23 @@ function letThereBeVehicle(event) {
   vehicle_rows_container.insertBefore(newRow, vehicle_rows_container.childNodes[2]);
 
   vehicle.drawVehicleInControlPanel(vehicles.length-1);
+}
+
+function toggleRun () {
+  let runDiv = document.getElementById("toggleRun");
+  if (running) {
+    clearInterval(running);
+    running = null;
+    runDiv.innerHTML = "Run";
+  } else {
+    runDiv.innerHTML = "Stop";
+    running = setInterval(() => {
+      console.log("Running");
+      vehicles.forEach(v => {
+        v.move();
+      });
+    }, 1000);
+  }
 }
 
 // let vehicles = [];
@@ -177,21 +228,7 @@ function letThereBeVehicle(event) {
 //   lights.push(light);
 // }
 
-// function toggleRun () {
-//   let runDiv = document.getElementById("toggleRun");
-//   if (running) {
-//     clearInterval(running);
-//     running = null;
-//     runDiv.innerHTML = "Run";
-//   } else {
-//     runDiv.innerHTML = "Stop";
-//     running = setInterval(() => {
-//         // For each vehicle call update wheel speed
-//         // Then move each according to new speed
-//         console.log("Running");
-//     }, 100);
-//   }
-// }
+
 /********************************************************************* RESOURCES
     https://css-tricks.com/almanac/properties/t/transform-origin/
     https://css-tricks.com/get-value-of-css-rotation-through-javascript/

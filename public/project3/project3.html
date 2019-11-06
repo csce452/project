@@ -29,7 +29,11 @@
                     <div id="control-panel" class="col-lg-4">
                         <div class="row h-100">
                             <div id="vehicle-rows-container" class="col-lg-12">
-                                <h1>Vehicles</h1>
+                                <div class="row vehicle-row align-content-center">
+                                    <h1 class="col-9">Vehicles</h1>
+                                    <button class="col-2" id="toggleRun" onclick="toggleRun()">Run</button>
+                                </div>
+
                                 <div class="row vehicle-row align-content-center">
                                     <div class="col-lg-12 text-center">
                                         <form onsubmit="letThereBeVehicle(); return false;">

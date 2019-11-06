@@ -44,23 +44,23 @@ html, body {
             background-color: black;
         }
 
-            #window .vehicle .lsensor {
-                position: absolute;
-                top: 10px;
-                left: 50px;
-                height: 10px;
-                width: 30px;
-                background-color: black;
-            }
+        #window .vehicle .lsensor {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            height: 10px;
+            width: 30px;
+            background-color: black;
+        }
 
-            #window .vehicle .rsensor {
-                position: absolute;
-                top: 30px;
-                left: 50px;
-                height: 10px;
-                width: 30px;
-                background-color: black;
-            }
+        #window .vehicle .rsensor {
+            position: absolute;
+            top: 30px;
+            left: 50px;
+            height: 10px;
+            width: 30px;
+            background-color: black;
+        }
 
 #control-panel {
     height: 100%;
