@@ -122,7 +122,7 @@ class Vehicle {
   }
 
   /*
-    The remaining two functions in the Vehicle class are self-explanatory  
+    The remaining three functions in the Vehicle class are self-explanatory  
   */
   getDistanceFromLightSource(index) {
     var vehicle = document.getElementById(this.id);
