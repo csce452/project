@@ -100,19 +100,40 @@ class Vehicle {
         // These values only work for some cases
       // For "self.current_angle" it must be exponential (faster as it gets closer to the light)
         // right now it's just constant
-      counter += .2;
 
       // I subtracted 150 from the desired distance travelled because
       // if not, it always passes the light
-      if(self.current_distance < self.desired_distance-150) {
-        vehicle.style.left = `${parseInt(self.current_distance) + counter}px`;
-        self.current_distance = parseInt(self.current_distance) + counter;
-      }
+      // if(self.current_distance < self.desired_distance-50) {
+      //   console.log("hello1");
+      //   counter += .8;
+      // } else if(self.current_distance > self.desired_distance-50 && self.current_distance < self.desired_distance-100) {
+      //   counter += .4;
+      //   console.log("hello2");
+      // } else if(self.current_distance < self.desired_distance-150) {
+      //   counter += .2;
+      //   console.log("hello3");
+      // } else if(self.current_distance < self.desired_distance-200) {
+      //   counter += .1;
+      //   console.log("hello4");
+      // }
 
-      if (self.current_angle < self.desired_angle) {
+      if(self.current_distance < (self.desired_distance-self.desired_distance) + 50) {
+        counter += .2;
+      } else if(self.current_distance < (self.desired_distance-self.desired_distance) + 100) {
+        counter += .4;
+      } else if(self.current_distance < (self.desired_distance-self.desired_distance) + 150) {
+        counter += .8;
+      } else if(self.current_distance < (self.desired_distance-self.desired_distance) + 200) {
+        counter += 1.6;
+      } 
+      
+      vehicle.style.left = `${parseInt(self.current_distance) + counter}px`;
+      self.current_distance = parseInt(self.current_distance) + counter;
+
+      if(self.current_angle < self.desired_angle) {
         var vehicleContainer = document.getElementById(`vehicle-container-${self.id}`);
         vehicleContainer.style.transform = `rotate(${self.current_angle}deg)`;
-        self.current_angle += 1.1;
+        self.current_angle += 1.2;
       }
 
 
@@ -158,7 +179,7 @@ class Vehicle {
     var dx = x_of_light - vehicle.getBoundingClientRect().x;
     var dy = y_of_light - vehicle.getBoundingClientRect().y;
 
-    var angle = Math.atan2(dy,  dx) / Math.PI * 180;
+    var angle = Math.atan2(dy,  dx) * 180 / Math.PI;
     this.desired_angle = angle;
   }
 
@@ -251,119 +272,6 @@ function letThereBeVehicle(event) {
   vehicle.run();
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// let vehicles = [];
-// let lights = [];
-// let running;
-
-// class Vehicle {
-//   x = 0;
-//   y = 0;
-//   k = [0,0,0,0];
-//   wheelSpeeds = [0,0];
-//   constructor(initialPos, ks) {
-//     this.x = initialPos[0];
-//     this.y = initialPos[1];
-//     this.k = ks;
-//     this.element = document.createElement('div');
-//     this.element.className = 'vehicle';
-//     this.element.id = 'vehicle' + vehicles.length;
-//     // TODO: this isn't seeming to set x and y correctly
-//     this.element.style.left = this.x;
-//     this.element.style.top = this.y;
-//     document.getElementById('window').appendChild(this.element);
-//     this.setupSensors();
-//   }
-
-//   setupSensors () {
-//     this.s1 = document.createElement('div');
-//     this.s1.className = "sensor";
-//     this.s1.id = "s1";
-//     this.s2 = document.createElement('div');
-//     this.s2.className = "sensor";
-//     this.s2.id = "s2";
-//     this.element.appendChild(this.s1);
-//     this.element.appendChild(this.s2);
-//   }
-
-//   updateWheelSpeed () {
-//     // For each light in lights do calcluations based on p3 equation
-//   }
-// }
-
-// class Light {
-//   x = 0;
-//   y = 0;
-//   intesity = 0;
-//   constructor (pos, intensity_) {
-//     this.x = pos[0];
-//     this.y = pos[1];
-//     this.intensity = intensity_;
-
-//     this.element = document.createElement('div');
-//     this.element.className = 'light';
-//     this.element.id = 'light' + lights.length;
-//     // TODO: this isn't seeming to set x and y correctly
-//     this.element.style.left = this.x;
-//     this.element.style.top = this.y;
-//     document.getElementById('window').appendChild(this.element);
-//   }
-// }
-
-// function createVehicle (pos, ks) {
-
-//   console.log(pos)
-//   let vehicle = new Vehicle(pos, ks);
-//   vehicles.push(vehicle);
-// }
-
-// function createLight (pos, intensity) {
-//   let light = new Light(pos, intensity);
-//   lights.push(light);
-// }
-
-// function toggleRun () {
-//   let runDiv = document.getElementById("toggleRun");
-//   if (running) {
-//     clearInterval(running);
-//     running = null;
-//     runDiv.innerHTML = "Run";
-//   } else {
-//     runDiv.innerHTML = "Stop";
-//     running = setInterval(() => {
-//         // For each vehicle call update wheel speed
-//         // Then move each according to new speed
-//         console.log("Running");
-//     }, 100);
-//   }
-// }
 /********************************************************************* RESOURCES
     https://css-tricks.com/almanac/properties/t/transform-origin/
     https://css-tricks.com/get-value-of-css-rotation-through-javascript/
