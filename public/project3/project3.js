@@ -8,10 +8,11 @@ function getDistance(pos1, pos2) {
 
 class Vehicle {
 
-  constructor(pos) {
-    this.x = pos[0];
-    this.y = pos[1];
-    this.k = [1,1,1,1];
+  constructor(pos, k_) {
+    this.x = parseInt(pos[0]);
+    this.y = parseInt(pos[1]);
+    this.k = k_;
+    this.heading = 0;
   }
 
   getRandomColor() {
@@ -59,33 +60,61 @@ class Vehicle {
     newVehicle.append(leftSensor);
     newVehicle.append(rightSensor);
 
+    this.element = newVehicle;
     document.getElementById('window').appendChild(newVehicle);
   }
 
-  move () {
-    this.adjustHeading();
+  move (time) {
+    let s = this.getSensors();
+    console.log(s);
+    let v1 = parseInt(this.k[0]) * s[0] + parseInt(this.k[1]) * s[1];
+    let v2 = parseInt(this.k[2]) * s[0] + parseInt(this.k[3]) * s[1];
+
+    if (Math.abs(v1 - v2) < .00001) {
+      // Going straight
+      console.log("Straight");
+    } else {
+      // Circular movement
+      let R = 40 / 2 * ((v1 + v2) / (v2 - v1));
+
+      let center_x = this.x - R * Math.sin(this.heading);
+      let center_y = this.y + R * Math.cos(this.heading);
+      let w = (v2 - v1) / 40;
+
+      let dHeading = w * time;
+
+      this.x = Math.cos(dHeading) * (this.x - center_x) - Math.sin(dHeading) * (this.y - center_y) + center_x;
+      this.y = Math.sin(dHeading) * (this.x - center_x) + Math.cos(dHeading) * (this.y - center_y) + center_y;
+      this.heading += dHeading;
+      console.log("New pos: ", this.x, this.y);
+      console.log("New heading: ", this.heading);
+
+      this.element.style.left = `${parseInt(this.x)}px`;
+      this.element.style.top = `${parseInt(this.y)}px`;
+      this.element.style.transform = `rotate(${this.heading}rad)`;
+    }
   }
 
   getSensors () {
-    let s1 = 0;
-    let s2 = 0;
+    let d1 = 9999999;
+    let d2 = 9999999;
+    let s2_location = [this.x + 50 * Math.cos(this.heading) + 10 * Math.sin(this.heading), this.y + 50 * Math.sin(this.heading) + 10 * Math.cos(this.heading)];
+    let s1_location = [this.x + 50 * Math.cos(this.heading) + 30 * Math.sin(this.heading), this.y + 50 * Math.sin(this.heading) + 30 * Math.cos(this.heading)];
     lights.forEach(light => {
       let lightPosition = [light.element.offsetLeft, light.element.offsetTop];
-      s1 += 100 / getDistance([this.x + 50, this.y + 10], lightPosition);
-      s2 += 100 / getDistance([this.x + 50, this.y + 30], lightPosition);
-    });
-    s1 /= lights.length;
-    s2 /= lights.length;
-    return [s1, s2];
-  }
+      // TODO:  Use direction and heading to simulate the sensors being pointed forward
+      let direction = Math.atan2(lightPosition[1] - this.y, lightPosition[0] - this.x);
 
-  adjustHeading () {
-    let s = this.getSensors();
-    console.log(s);
-    let v1 = this.k[0] * s[0] + this.k[1] * s[1];
-    let v2 = this.k[2] * s[0] + this.k[3] * s[1];
-    let w = (v1 - v2) / 40 // 40 is distance between wheels
-    console.log(w);
+      let d = getDistance(s1_location, lightPosition);
+      if (d < d1) {
+        d1 = d;
+      }
+      d = getDistance(s2_location, lightPosition);
+      if (d < d2) {
+        d2 = d;
+      }
+    });
+    return [100 / d1, 100 / d2];
   }
 
 
@@ -121,7 +150,13 @@ function letThereBeVehicle(event) {
   
   var x = document.getElementById('x-input').value;
   var y = document.getElementById('y-input').value;
-  var vehicle = new Vehicle([x, y]);
+  let k = [];
+  k.push(document.getElementById('k1').value);
+  k.push(document.getElementById('k2').value);
+  k.push(document.getElementById('k3').value);
+  k.push(document.getElementById('k4').value);
+
+  var vehicle = new Vehicle([x, y], k);
 
   var vehicle_rows_container = document.getElementById("vehicle-rows-container");
   var newRow = document.createElement("div");
@@ -143,6 +178,7 @@ function letThereBeVehicle(event) {
 
 function toggleRun () {
   let runDiv = document.getElementById("toggleRun");
+  let time = 500;
   if (running) {
     clearInterval(running);
     running = null;
@@ -152,9 +188,9 @@ function toggleRun () {
     running = setInterval(() => {
       console.log("Running");
       vehicles.forEach(v => {
-        v.move();
+        v.move(time);
       });
-    }, 1000);
+    }, time);
   }
 }
 
