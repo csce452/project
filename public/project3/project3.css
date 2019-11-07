@@ -1,0 +1,340 @@
+html, body {
+    height: 100vh;
+    width: 100vw;
+}
+
+#window {
+    height: 100%;
+    background-image: url("../assets/img/grid-lines.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+    overflow: scroll;
+}
+
+    #window .light {
+        position: fixed;
+        height: 50px;
+        width: 50px;
+        border-radius: 50%;
+        background-color: #ffffd8;
+    }
+
+    #window .vehicle {
+        position: fixed;
+        height: 50px;
+        width: 70px;
+        background-color: #FFF;
+        z-index: 10;
+    }
+
+        #window .vehicle:before {
+            content: "........";
+            position: relative;
+            top: -20px;
+            left: -5px;
+            background-color: black;
+        }
+
+        #window .vehicle:after {
+            content: "........";
+            position: relative;
+            top: 20px;
+            left: -5px;
+            background-color: black;
+        }
+
+        #window .vehicle .lsensor {
+            position: absolute;
+            top: 10px;
+            left: 50px;
+            height: 10px;
+            width: 30px;
+            background-color: black;
+        }
+
+        #window .vehicle .rsensor {
+            position: absolute;
+            top: 30px;
+            left: 50px;
+            height: 10px;
+            width: 30px;
+            background-color: black;
+        }
+
+#control-panel {
+    height: 100%;
+    background-color:#500000;
+}
+
+    #control-panel h1 {
+        font-size: 30px;
+        color: #ffffff;
+        font-family: 'Permanent Marker', cursive;
+        text-align: center;
+    }
+
+    #control-panel .vehicle-row {
+        height: 150px;
+    }
+
+    .vehicle-row .vehicle {
+        position: relative;
+        top: 20%;
+        left: 40%;
+        height: 90px;
+        width: 100px;
+        background-color: #FFF;
+        z-index: 10;
+    }
+
+        .vehicle-row .vehicle:before {
+            content: ".............";
+            position: relative;
+            top: -20px;
+            left: -30px;
+            background-color: black;
+        }
+
+        .vehicle-row .vehicle:after {
+            content: ".............";
+            position: relative;
+            top: 60px;
+            left: -30px;
+            background-color: black;
+        }
+
+        .vehicle-row .vehicle .lsensor {
+            position: absolute;
+            top: 20px;
+            left: 70px;
+            height: 20px;
+            width: 50px;
+            background-color: black;
+        }
+
+        .vehicle-row .rsensor {
+            position: absolute;
+            top: 50px;
+            left: 70px;
+            height: 20px;
+            width: 50px;
+            background-color: black;
+        }
+
+
+/* html, body {
+    height: 100vh;
+    width: 100vw;
+}
+
+.vehicle {
+  height: 50px;
+  width: 50px;
+  background-color: #FFF;
+}
+
+.sensor {
+  height: 10px;
+  width: 10px;
+  background-color: #000;
+  position: relative;
+}
+
+.light {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: #FFF;
+}
+
+#window {
+    height: 100%;
+    background-image: url("../assets/img/grid-lines.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#control-panel {
+    height: 100%;
+    background-color:#500000;
+}
+
+#base {
+    height: 50px;
+    width: 50px;
+    position: absolute;
+    top: 45.5%;
+    left: 47%;
+    background-color: #500000;
+    border-top-left-radius: 50%;
+    border-top-right-radius: 50%;
+    border: 1px solid #FFF;
+	line-height: 48px;
+	margin: 0 25px;
+	text-align: center;
+}
+    #base-pos{
+       /* position: absolute;
+        width: 10px;
+        height: 10px;
+      /*  top: 40%;
+        left: 40%;
+        border-radius: 50%;
+        background-color: #000;
+        z-index: 999999;
+		display: inline-block;
+    }
+
+	#tip {
+		left: 325px;
+		position: relative;
+		top: 0px;
+	}
+
+	#invis {
+        position: relative;
+        top: 0%;
+        left: 100%;
+	}
+
+	.circle {
+		position: relative;
+		width: 20px;
+		height: 20px;
+		border-radius: 50%;
+		background-color: #FFF;
+	}
+
+	.tip {
+		width: 10px;
+		height: 10px;
+		/* left: 70px;
+		border-radius: 50%;
+		background-color: #000;
+		z-index: 9999;
+	}
+
+    .link-style {
+        border-radius: 70%;
+        border: 1px solid #FFF;
+		background-color: #500000;
+    }
+
+	.fill {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0px;
+		left: 0px;
+	}
+
+	.link {
+		z-index: 9999;
+		/* transition: all 0.05s ease-in-out;
+	}
+
+    #link1 {
+        height: 25px;
+        width: 150px;
+        position: absolute;
+        top: 25%;
+        left: 50%;
+        transform-origin: center left;
+        -webkit-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+
+        #link2 {
+            height: 25px;
+            width: 100px;
+            position: relative;
+			margin-top: 1px;
+            top: 0%;
+            left: 100%;
+           /* background-color: #500000;
+            transform-origin: center left;
+            -webkit-transform: rotate(0deg);
+            -moz-transform: rotate(0deg);
+            -ms-transform: rotate(0deg);
+            -o-transform: rotate(0deg);
+            transform: rotate(0deg);
+        }
+
+            #link3 {
+                height: 25px;
+                width: 75px;
+                position: relative;
+
+                top: 0%;
+                left: 100%;
+				margin-top: -1px;
+              /*  background-color: #500000;
+                transform-origin: center left;
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+                #link3 i {
+                    color: #FFF;
+                    font-size: 70px;
+                    -webkit-transform: rotate(200deg);
+                    -moz-transform: rotate(200deg);
+                    -ms-transform: rotate(200deg);
+                    -o-transform: rotate(200deg);
+                    transform: rotate(200deg);
+                    position: relative;
+                    bottom: 12px;
+                    left: 30px;
+                }
+
+.mode-label {
+    font-size: 30px;
+    color: #ffffff;
+    font-family: 'Permanent Marker', cursive;
+    text-align: center;
+}
+
+.joint-label {
+    font-size: 30px;
+    color: #ffffff;
+    font-family: 'Permanent Marker', cursive;
+}
+
+.counter-clock-btn, .clockwise-btn {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+.counter-clock-btn:active,
+.counter-clock-btn:focus,
+.clockwise-btn:active,
+.clockwise-btn:focus {
+    outline: none !important;
+
+}
+    .counter-clock-btn, .clockwise-btn, i {
+        font-size: 30px;
+    }
+
+.instructions{
+    font-size: 20px;
+    color: #ffffff;
+    font-family: 'Permanent Marker', cursive;
+}
+
+.dir-button {
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+}
+
+.dir-button i {
+    font-size: 20px;
+} */
