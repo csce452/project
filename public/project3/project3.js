@@ -178,7 +178,7 @@ function letThereBeVehicle(event) {
 
 function toggleRun () {
   let runDiv = document.getElementById("toggleRun");
-  let time = 500;
+  let time = 10;
   if (running) {
     clearInterval(running);
     running = null;
