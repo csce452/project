@@ -1,0 +1,164 @@
+html, body {
+    height: 100vh;
+    width: 100vw;
+    background-color: #500000;
+}
+
+#window {
+    cursor: pointer;
+    padding: 0px;
+}
+
+    img {
+        height: 100%;
+        width: 100%;
+    }
+
+    #car-window {
+        position: fixed;
+        height: 15px;
+        width: 15px;
+        border-radius: 50%;
+        background-color: red;
+        display: inline-block;
+    }
+
+.img-zoom-lens {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    /*set the size of the lens:*/
+    width: 80px;
+    height: 80px;
+  }
+
+.img-zoom-result {
+    /*set the size of the result div:*/
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}
+
+#steering-wheel {
+    height: 150px;
+    width: 150px;
+    transform-origin: center center;
+}
+
+h3 {
+    font-family: 'VT323', monospace;
+    color: #FFFFFF;
+}
+
+h3:first-child {
+    font-size: 70px;
+    position: absolute;
+    top: 30px;
+    left: 5px;
+    display: inline-block;
+}
+
+h3:last-child {
+    position: absolute;
+    top: 100px;
+    left: 50px;
+    display: inline-block;
+}
+
+.wheel {
+    height: 20%;
+    width: 5%;
+    background-color: #808080;
+}
+
+.wheel:nth-child(1) {
+    position: absolute;
+    top: 20%;
+    left: 40%;
+}
+
+.wheel:nth-child(2) {
+    position: absolute;
+    top: 20%;
+    left: 60%;
+}
+
+.wheel:nth-child(3) {
+    position: absolute;
+    top: 60%;
+    left: 40%;
+}
+
+.wheel:nth-child(3):before {
+    content: " ";
+    display: block;
+    height: 1px;
+    width: 300%;
+    background-color: #808080;
+    position: absolute;
+    top: -150%;
+    left: 100%;
+}
+
+.wheel:nth-child(3):after {
+    content: " ";
+    display: block;
+    height: 1px;
+    width: 300%;
+    background-color: #808080;
+    position: absolute;
+    top: 50%;
+    left: 100%;
+}
+
+.wheel:nth-child(4) {
+    position: absolute;
+    top: 60%;
+    left: 60%;
+}
+
+.wheel:nth-child(4):before {
+    content: " ";
+    display: block;
+    height: 200%;
+    width: 1px;
+    background-color: #808080;
+    position: absolute;
+    top: -150%;
+    left: -150%;
+}
+
+#wheel1-info {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    font-family: 'VT323', monospace;
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+#wheel2-info {
+    position: absolute;
+    top: 20%;
+    right: 15%;
+    font-family: 'VT323', monospace;
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+#wheel3-info {
+    position: absolute;
+    bottom: 15%;
+    left: 20%;
+    font-family: 'VT323', monospace;
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+#wheel4-info {
+    position: absolute;
+    bottom: 15%;
+    right: 15%;
+    font-family: 'VT323', monospace;
+    color: #FFFFFF;
+    font-size: 20px;
+}
