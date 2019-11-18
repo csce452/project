@@ -254,9 +254,20 @@ function calculateWheelSpeeds(speed) {
         var G = GLOBAL_PORSCHE.G;
 
         var omega = (speed * Math.sin(wheel2_angle * Math.PI/180)) / G;
-        var front_left_wheel_speed = (omega * G) / Math.sin(wheel1_angle * Math.PI/180);
+        
+		// Front wheels
+		var front_left_wheel_speed = (omega * G) / Math.sin(wheel1_angle * Math.PI/180);
+        var front_right_wheel_speed = (omega * G) / Math.sin(wheel2_angle * Math.PI/180);
+		
+		// And back wheels
+		var back_left_wheel_speed = omega * (GLOBAL_PORSCHE.R + (GLOBAL_PORSCHE.D2 / 2));
+		var back_right_wheel_speed = omega * (GLOBAL_PORSCHE.R - (GLOBAL_PORSCHE.D2 / 2));
 
-        GLOBAL_PORSCHE.wheel_speeds = [Math.round(front_left_wheel_speed), Math.round(speed), 0, 0];
+        GLOBAL_PORSCHE.wheel_speeds = 
+		[Math.round(front_left_wheel_speed),
+		Math.round(front_right_wheel_speed),
+		Math.round(back_left_wheel_speed),
+		Math.round(back_right_wheel_speed)];
     }
 }
   /*
