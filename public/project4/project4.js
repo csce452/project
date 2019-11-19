@@ -419,24 +419,12 @@ var paint;
 
 function bloop(dot_x, dot_y) {
     var dot = document.createElement("div");
+    dot.id = "dot-window";
     dot.className = "circle";
     dot.style.position = "absolute";
-    
-    /*
-    var position = $(document.getElementById('tip')).offset();
-    var new_pos = $(dot).css({
-        top: position.top-5,
-        left: position.left
-    });
-      
-    var x = new_pos.left;
-    var y = new_pos.top;
-    */
-	var x = dot_x;
-	var y = dot_y;
-	
-    dot.style.top = y;
-    dot.style.left = x;
+
+    dot.style.left = dot_x + 'px';
+    dot.style.top = dot_y + 'px';
         
-    document.getElementById("window").appendChild(dot);
+    document.getElementById("window").append(dot);
 }
