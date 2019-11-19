@@ -1,4 +1,5 @@
 var GLOBAL_PORSCHE;
+var ALPHA_MIDDLE;
 
 class Porsche {
     constructor(pos_, wheel_speeds_, wheel_angles_, G_, D2_, R_, heading_, velocity_) {
@@ -16,6 +17,9 @@ class Porsche {
     run() {
         this.drawMap();
         this.displayWheelInfo();
+        this.updateRedDotPosition();
+		var pos = this.getPorschePosition("This arg doesn't matter");
+		writeToLog(this.velocity, this.heading, pos.x, pos.y); // Write this data to the "log"
     }
 
     /* Draws the zoomed-in image on the top right corner of the screen */
@@ -107,10 +111,40 @@ class Porsche {
         var wheel3_info = document.getElementById("wheel3-info");
         var wheel4_info = document.getElementById("wheel4-info");
 
-        wheel1_info.innerText = `${this.wheel_speeds[0]}mph \n ${Math.round(this.wheel_angles[0])}deg`;
-        wheel2_info.innerText = `${this.wheel_speeds[1]}mph \n ${Math.round(this.wheel_angles[1])}deg`;
+        wheel1_info.innerText = `${this.wheel_speeds[0]}mph`;
+        wheel2_info.innerText = `${this.wheel_speeds[1]}mph`;
         wheel3_info.innerText = `${this.wheel_speeds[2]}mph`;
         wheel4_info.innerText = `${this.wheel_speeds[3]}mph`;
+
+        var wheel1_angle = document.getElementById("wheel1-info-angle");
+        var wheel2_angle = document.getElementById("wheel2-info-angle");
+
+        wheel1_angle.innerText = `${Math.round(this.wheel_angles[0])}deg`;
+        wheel2_angle.innerText = `${Math.round(this.wheel_angles[1])}deg`;
+
+        var speedometer = document.getElementById("speedometer");
+        speedometer.innerText = `${Math.round(this.velocity)}`;
+    }
+
+    updateRedDotPosition() {
+        var porsche = document.getElementById("car-window");
+        var x = 0, y = 0;
+
+        var heading_in_radians = (this.heading) * Math.PI/180;
+        var cos = Math.cos(heading_in_radians);
+        var sin = Math.sin(heading_in_radians);
+
+        x = (this.velocity/75) * cos;
+        y = (this.velocity/75) * sin;
+
+
+        if(this.pos[0] + x && this.pos[1] + y) {
+            this.pos[0] = this.pos[0] - x;
+            this.pos[1] = this.pos[1] - y;
+
+            porsche.style.top = this.pos[1] + 'px';
+            porsche.style.left = this.pos[0] + 'px';
+        }   
     }
 } 
 
@@ -132,7 +166,7 @@ function letThereBePorsche(event) {
     car.style.left = x - (car.offsetWidth / 2) + 'px';
     car.style.top = y - (car.offsetHeight / 2)  + 'px';
 
-    var porsche = new Porsche([x,y], [0,0,0,0], [0,0], 96.5, 60, 0, 0);
+    var porsche = new Porsche([x - (car.offsetWidth / 2),y - (car.offsetHeight / 2)], [0,0,0,0], [0,0], 96.5, 60, 0, 0);
     GLOBAL_PORSCHE = porsche;
 
     setInterval(() => {
@@ -151,6 +185,7 @@ function updateAngle(e) {
     var angle = Math.atan2(e.pageX - x_center_of_steering_wheel, -(e.pageY - y_center_of_steering_wheel))*(180/Math.PI);
     
     calculateWheelAlphas(angle, steering_wheel);
+	updateSpeed(e);
 }
 
 /*
@@ -169,13 +204,16 @@ function calculateWheelAlphas(angle, steering_wheel) {
             // ICC is on the right side
             var rad = (angle * Math.PI) / 180;
             var R = ( G / Math.tan(rad)) + (D2/2);
-            var alpha_middle = Math.atan(G / R) * 180/Math.PI;
+            var alpha_middle = (Math.atan(G / R) * 180/Math.PI);
             var alpha_outside = Math.atan(G / (R + D2/2) ) * 180/Math.PI;
             var alpha_inside = angle;
 
+            if(angle <= 90) {
+                ALPHA_MIDDLE = alpha_middle; 
+            }
+
             if(angle <= 30) {
                 GLOBAL_PORSCHE.wheel_angles = [alpha_outside, alpha_inside];
-                GLOBAL_PORSCHE.heading = alpha_middle;
                 GLOBAL_PORSCHE.R = R;
                 wheel1.style.transform = `rotate(${alpha_outside}deg)`;
                 wheel2.style.transform = `rotate(${alpha_inside}deg)`;
@@ -198,9 +236,13 @@ function calculateWheelAlphas(angle, steering_wheel) {
             */
             var rad = (angle * Math.PI) / 180;
             var R = ( G / Math.tan(rad)) - (D2/2);
-            var alpha_middle = Math.atan(G / R) * 180/Math.PI;
+            var alpha_middle = (Math.atan(G / R) * 180/Math.PI);
             var alpha_outside = Math.atan(G / (R - D2/2) ) * 180/Math.PI;
             var alpha_inside = angle;
+
+            if(angle >= -90) {
+                ALPHA_MIDDLE = alpha_middle; 
+            }
         
             if(angle >= -30) {
 
@@ -209,8 +251,7 @@ function calculateWheelAlphas(angle, steering_wheel) {
                     We also need to switch alpha_inside to be the left wheel and
                     alpha_outside to be the right wheel
                 */
-                GLOBAL_PORSCHE.wheel_angles = [alpha_inside, alpha_outside];
-                GLOBAL_PORSCHE.heading = alpha_middle;
+                GLOBAL_PORSCHE.wheel_angles = [alpha_inside, alpha_outside];               
                 GLOBAL_PORSCHE.R = R;
                 wheel1.style.transform = `rotate(${alpha_inside}deg)`;
                 wheel2.style.transform = `rotate(${alpha_outside}deg)`;
@@ -225,39 +266,53 @@ function calculateWheelAlphas(angle, steering_wheel) {
 /* Handles button events to control vehicle speed */
 function updateSpeed(e) {
 
-    var speedometer = document.getElementById("speedometer");
-    var front_right_wheel_speed = parseInt(speedometer.innerText);
+    var wheel_fake_speed = document.getElementById("wheel-fake-speed");
+    var wheel_right_speed = parseInt(wheel_fake_speed.innerText);
 
     if(e.key == 'e') {
-        if(parseInt(speedometer.innerText) <= 199) {
-            front_right_wheel_speed += 1;
-            speedometer.innerText = parseInt(speedometer.innerText) + 1;
+        if(parseInt(wheel_fake_speed.innerText) <= 199) {
+            wheel_fake_speed.innerText = parseInt(wheel_fake_speed.innerText) + 1;
         }
     } else if(e.key == 'w') {
-        if(parseInt(speedometer.innerText) >= -4) {
-            front_right_wheel_speed -= 1;
-            speedometer.innerText = parseInt(speedometer.innerText) - 1;
+        if(parseInt(wheel_fake_speed.innerText) >= -4) {
+            wheel_fake_speed.innerText = parseInt(wheel_fake_speed.innerText) - 1;
         }
     } else if(e.key == 'q') {
-        front_right_wheel_speed = 0;
-        speedometer.innerText = 0;
+        wheel_fake_speed.innerText = 0;
     }
 
-    calculateWheelSpeeds(front_right_wheel_speed);
+    calculateWheelSpeeds(wheel_right_speed);
 }
 
 function calculateWheelSpeeds(speed) {
     if(GLOBAL_PORSCHE) {
-        //var R = GLOBAL_PORSCHE.R;
+        var R = GLOBAL_PORSCHE.R;
         var wheel1_angle = GLOBAL_PORSCHE.wheel_angles[0];
         var wheel2_angle = GLOBAL_PORSCHE.wheel_angles[1];
         var G = GLOBAL_PORSCHE.G;
 
         var omega = (speed * Math.sin(wheel2_angle * Math.PI/180)) / G;
-        var front_left_wheel_speed = (omega * G) / Math.sin(wheel1_angle * Math.PI/180);
+        
+		// Front wheels
+		var front_left_wheel_speed = (omega * G) / Math.sin(wheel1_angle * Math.PI/180);
+        var front_right_wheel_speed = (omega * G) / Math.sin(wheel2_angle * Math.PI/180);
+		
+		var back_right_wheel_speed = omega * (R - (GLOBAL_PORSCHE.D2/2));
+        var back_left_wheel_speed = omega * (R + (GLOBAL_PORSCHE.D2/2));
 
-        GLOBAL_PORSCHE.wheel_speeds = [Math.round(front_left_wheel_speed), Math.round(speed), 0, 0];
+        GLOBAL_PORSCHE.wheel_speeds = [Math.round(front_left_wheel_speed), Math.round(speed), 
+            Math.round(back_left_wheel_speed), Math.round(back_right_wheel_speed)];
+
+        calculateVehicleSpeed(omega, R);
     }
+}
+
+function calculateVehicleSpeed(omega, R) {
+    var velocity = omega * R;
+    GLOBAL_PORSCHE.velocity = velocity;
+    GLOBAL_PORSCHE.heading = (velocity/GLOBAL_PORSCHE.G) * Math.tan(ALPHA_MIDDLE * Math.PI/180) * 180/Math.PI;
+
+    //console.log(GLOBAL_PORSCHE.heading);
 }
   /*
     https://www.w3schools.com/howto/howto_js_image_zoom.asp
@@ -266,3 +321,95 @@ function calculateWheelSpeeds(speed) {
     https://www.w3schools.com/jsref/met_element_queryselector.asp
     https://www.xarg.org/book/kinematics/ackerman-steering/
   */
+
+// ********** Log Writing/Reading/Playback **********
+
+loadedLog = [];
+loadedTrajectory = [];
+logPlayback = false;
+
+// Writes the current Porsche instant data to a log.
+function writeToLog(wheel_angle, car_speed, pos_x, pos_y) {
+	if (car_speed == 0) return; // Don't log if the car isn't moving
+	
+	// Message format: "velocity,angle|x,y;"
+	var logMessage = "" + car_speed + "," + wheel_angle + "|" + pos_x + "," + pos_y + ";";
+	// TODO: Append this to an element somewhere
+	//console.log(logMessage); // TODO
+	document.getElementById("loggyloglog").value += logMessage;
+}
+
+function logPlayback() {
+    // Sanity check first
+    if (loadedLog.length <= 0) {
+        // There's no more to play back!
+        clearInterval(logPlayback);
+        logPlayback = null;
+        console.log("Log playback ended.");
+        return;
+    }
+
+    // Get the data to compute this iteration
+    var logPiece = loadedLog.pop().split(","); // This is why I reversed it!
+
+    // logPiece[0] is the velocity, logPiece[1] is the angle
+    var carVelocity = parseFloat(logPiece[0]);
+    var carAngle = parseFloat(logPiece[1]);
+
+    // Send these two data pieces to the correct areas, and
+    // have the functions we already built do the calculation and "playback"
+    // TODO TODO TODO
+}
+
+// Pulls text from a text input box, parses it, and starts playing it back
+// on the simulator itself.
+function runFromLog() {
+	// TODO: Get log text from an element somehow
+	var logText = "" + document.getElementById("loggyloglog").value;
+	console.log(logText);
+
+	// Thought: log text should be in the format "velocity,angle|x,y;velocity,angle|x,y;velocity,angle|x,y;..."
+	// e.g. "20,0.1|800,400;21,0.2|801,401;20,0.15|802,402;..."
+	
+	// Step 1: Parse log text into individual pieces
+	var loggedData = logText.split(";");
+	
+	// Step 2: Split each piece into "velocity,angle" and "x,y"
+	// and put all of these into a position array
+	for (var i = 0; i < loggedData.length; i++) {
+		var dataPiece = loggedData[i].split("|");
+		// dataPiece[0] is the vehicle velocity,heading
+		// dataPiece[1] is the vehicle x,y
+		
+		// Put the velocity,heading into loadedLog array
+		// and the x,y into the trajectory array
+		loadedLog.push("" + dataPiece[0]);
+		loadedTrajectory.push("" + dataPiece[1]);
+	}
+	
+	loadedLog.reverse();
+	loadedTrajectory.reverse();
+	// Reversing these means we can simply use pop() on them later
+	
+	// Step 3: Visually load the trajectory from loadedTrajectory
+	displayTrajectory();
+	
+	// Step 4: Start running through the log
+	console.log("Starting playback from log...");
+	running = function(){
+        setInterval(logPlayback, 100);
+    }
+}
+
+// Parses and displays every trajectory point in loadedTrajectory.
+function displayTrajectory() {
+	for (var i = 0; i < loadedTrajectory.length; i++) {
+		var coordinates = loadedTrajectory[i].split(",");
+		var x_coord = parseFloat(coordinates[0]);
+		var y_coord = parseFloat(coordinates[1]);
+		// Now we have (x,y) of a point along the car's trajectory.
+		// Put something on the screen canvas to represent it
+		
+		// TODO: I am not so good with this!
+	}
+}
