@@ -353,7 +353,7 @@ function runFromLog() {
 	}
 	
 	// Step 3: Visually load the trajectory from loadedTrajectory
-	loadedLog = loggedData;
+	displayTrajectory();
 	
 	// Step 4: Start running through the log
 	console.log("Starting playback from log...");
