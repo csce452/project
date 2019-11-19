@@ -356,10 +356,11 @@ function runFromLog() {
 		// and the x,y into the trajectory array
 		loadedLog.push(dataPiece[0]);
 		loadedTrajectory.push(dataPiece[1]);
-		// The arrays are backwards at this point, but it
-		// fixes itself because we can just repeatedly pop()
-		// them to make it seem "ordered" again.
 	}
+	
+	loadedLog.reverse();
+	loadedTrajectory.reverse();
+	// Reversing these means we can simply use pop() on them later
 	
 	// Step 3: Visually load the trajectory from loadedTrajectory
 	displayTrajectory();
