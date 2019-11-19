@@ -1,4 +1,5 @@
 var GLOBAL_PORSCHE;
+var ALPHA_MIDDLE;
 
 class Porsche {
     constructor(pos_, wheel_speeds_, wheel_angles_, G_, D2_, R_, heading_, velocity_) {
@@ -127,12 +128,13 @@ class Porsche {
         var porsche = document.getElementById("car-window");
         var x = 0, y = 0;
 
-        var heading_in_radians = this.heading * Math.PI/180;
+        var heading_in_radians = (this.heading) * Math.PI/180;
         var cos = Math.cos(heading_in_radians);
         var sin = Math.sin(heading_in_radians);
 
-        x = this.velocity*Math.cos(cos);
-        y = this.velocity*Math.sin(sin);
+        x = (this.velocity/75) * cos;
+        y = (this.velocity/75) * sin;
+
 
         if(this.pos[0] + x && this.pos[1] + y) {
             this.pos[0] = this.pos[0] - x;
@@ -140,9 +142,6 @@ class Porsche {
 
             porsche.style.top = this.pos[1] + 'px';
             porsche.style.left = this.pos[0] + 'px';
-
-            // maybe also change angle of the car HTML document
-            porsche.style.transform = `rotate(${this.heading}deg)`;
         }   
     }
 } 
@@ -202,13 +201,16 @@ function calculateWheelAlphas(angle, steering_wheel) {
             // ICC is on the right side
             var rad = (angle * Math.PI) / 180;
             var R = ( G / Math.tan(rad)) + (D2/2);
-            var alpha_middle = Math.atan(G / R) * 180/Math.PI;
+            var alpha_middle = (Math.atan(G / R) * 180/Math.PI);
             var alpha_outside = Math.atan(G / (R + D2/2) ) * 180/Math.PI;
             var alpha_inside = angle;
 
+            if(angle <= 90) {
+                ALPHA_MIDDLE = alpha_middle; 
+            }
+
             if(angle <= 30) {
                 GLOBAL_PORSCHE.wheel_angles = [alpha_outside, alpha_inside];
-                GLOBAL_PORSCHE.heading = alpha_middle;
                 GLOBAL_PORSCHE.R = R;
                 wheel1.style.transform = `rotate(${alpha_outside}deg)`;
                 wheel2.style.transform = `rotate(${alpha_inside}deg)`;
@@ -231,9 +233,13 @@ function calculateWheelAlphas(angle, steering_wheel) {
             */
             var rad = (angle * Math.PI) / 180;
             var R = ( G / Math.tan(rad)) - (D2/2);
-            var alpha_middle = Math.atan(G / R) * 180/Math.PI;
+            var alpha_middle = (Math.atan(G / R) * 180/Math.PI);
             var alpha_outside = Math.atan(G / (R - D2/2) ) * 180/Math.PI;
             var alpha_inside = angle;
+
+            if(angle >= -90) {
+                ALPHA_MIDDLE = alpha_middle; 
+            }
         
             if(angle >= -30) {
 
@@ -242,8 +248,7 @@ function calculateWheelAlphas(angle, steering_wheel) {
                     We also need to switch alpha_inside to be the left wheel and
                     alpha_outside to be the right wheel
                 */
-                GLOBAL_PORSCHE.wheel_angles = [alpha_inside, alpha_outside];
-                GLOBAL_PORSCHE.heading = alpha_middle;
+                GLOBAL_PORSCHE.wheel_angles = [alpha_inside, alpha_outside];               
                 GLOBAL_PORSCHE.R = R;
                 wheel1.style.transform = `rotate(${alpha_inside}deg)`;
                 wheel2.style.transform = `rotate(${alpha_outside}deg)`;
@@ -299,6 +304,7 @@ function calculateWheelSpeeds(speed) {
 function calculateVehicleSpeed(omega, R) {
     var velocity = omega * R;
     GLOBAL_PORSCHE.velocity = velocity;
+    GLOBAL_PORSCHE.heading = (velocity/GLOBAL_PORSCHE.G) * Math.tan(ALPHA_MIDDLE * Math.PI/180) * 180/Math.PI;
 }
   /*
     https://www.w3schools.com/howto/howto_js_image_zoom.asp
