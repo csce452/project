@@ -18,6 +18,7 @@ class Porsche {
         this.drawMap();
         this.displayWheelInfo();
         this.updateRedDotPosition();
+		var pos = this.getPorschePosition("This arg doesn't matter");
 		writeToLog(this.velocity, this.heading, pos.x, pos.y); // Write this data to the "log"
     }
 
