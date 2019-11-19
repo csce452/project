@@ -16,7 +16,8 @@ class Porsche {
     run() {
         this.drawMap();
         this.displayWheelInfo();
-		writeToLog(this.velocity, this.heading); // Write this data to the "log"
+        this.updateRedDotPosition();
+		writeToLog(this.velocity, this.heading, pos.x, pos.y); // Write this data to the "log"
     }
 
     /* Draws the zoomed-in image on the top right corner of the screen */
@@ -108,10 +109,42 @@ class Porsche {
         var wheel3_info = document.getElementById("wheel3-info");
         var wheel4_info = document.getElementById("wheel4-info");
 
-        wheel1_info.innerText = `${this.wheel_speeds[0]}mph \n ${Math.round(this.wheel_angles[0])}deg`;
-        wheel2_info.innerText = `${this.wheel_speeds[1]}mph \n ${Math.round(this.wheel_angles[1])}deg`;
+        wheel1_info.innerText = `${this.wheel_speeds[0]}mph`;
+        wheel2_info.innerText = `${this.wheel_speeds[1]}mph`;
         wheel3_info.innerText = `${this.wheel_speeds[2]}mph`;
         wheel4_info.innerText = `${this.wheel_speeds[3]}mph`;
+
+        var wheel1_angle = document.getElementById("wheel1-info-angle");
+        var wheel2_angle = document.getElementById("wheel2-info-angle");
+
+        wheel1_angle.innerText = `${Math.round(this.wheel_angles[0])}deg`;
+        wheel2_angle.innerText = `${Math.round(this.wheel_angles[1])}deg`;
+
+        var speedometer = document.getElementById("speedometer");
+        speedometer.innerText = `${Math.round(this.velocity)}`;
+    }
+
+    updateRedDotPosition() {
+        var porsche = document.getElementById("car-window");
+        var x = 0, y = 0;
+
+        var heading_in_radians = this.heading * Math.PI/180;
+        var cos = Math.cos(heading_in_radians);
+        var sin = Math.sin(heading_in_radians);
+
+        x = this.velocity*Math.cos(cos);
+        y = this.velocity*Math.sin(sin);
+
+        if(this.pos[0] + x && this.pos[1] + y) {
+            this.pos[0] = this.pos[0] - x;
+            this.pos[1] = this.pos[1] - y;
+
+            porsche.style.top = this.pos[1] + 'px';
+            porsche.style.left = this.pos[0] + 'px';
+
+            // maybe also change angle of the car HTML document
+            porsche.style.transform = `rotate(${this.heading}deg)`;
+        }   
     }
 } 
 
@@ -133,7 +166,7 @@ function letThereBePorsche(event) {
     car.style.left = x - (car.offsetWidth / 2) + 'px';
     car.style.top = y - (car.offsetHeight / 2)  + 'px';
 
-    var porsche = new Porsche([x,y], [0,0,0,0], [0,0], 96.5, 60, 0, 0);
+    var porsche = new Porsche([x - (car.offsetWidth / 2),y - (car.offsetHeight / 2)], [0,0,0,0], [0,0], 96.5, 60, 0, 0);
     GLOBAL_PORSCHE = porsche;
 
     setInterval(() => {
@@ -226,30 +259,27 @@ function calculateWheelAlphas(angle, steering_wheel) {
 /* Handles button events to control vehicle speed */
 function updateSpeed(e) {
 
-    var speedometer = document.getElementById("speedometer");
-    var front_right_wheel_speed = parseInt(speedometer.innerText);
+    var wheel_fake_speed = document.getElementById("wheel-fake-speed");
+    var wheel_right_speed = parseInt(wheel_fake_speed.innerText);
 
     if(e.key == 'e') {
-        if(parseInt(speedometer.innerText) <= 199) {
-            front_right_wheel_speed += 1;
-            speedometer.innerText = parseInt(speedometer.innerText) + 1;
+        if(parseInt(wheel_fake_speed.innerText) <= 199) {
+            wheel_fake_speed.innerText = parseInt(wheel_fake_speed.innerText) + 1;
         }
     } else if(e.key == 'w') {
-        if(parseInt(speedometer.innerText) >= -4) {
-            front_right_wheel_speed -= 1;
-            speedometer.innerText = parseInt(speedometer.innerText) - 1;
+        if(parseInt(wheel_fake_speed.innerText) >= -4) {
+            wheel_fake_speed.innerText = parseInt(wheel_fake_speed.innerText) - 1;
         }
     } else if(e.key == 'q') {
-        front_right_wheel_speed = 0;
-        speedometer.innerText = 0;
+        wheel_fake_speed.innerText = 0;
     }
 
-    calculateWheelSpeeds(front_right_wheel_speed);
+    calculateWheelSpeeds(wheel_right_speed);
 }
 
 function calculateWheelSpeeds(speed) {
     if(GLOBAL_PORSCHE) {
-        //var R = GLOBAL_PORSCHE.R;
+        var R = GLOBAL_PORSCHE.R;
         var wheel1_angle = GLOBAL_PORSCHE.wheel_angles[0];
         var wheel2_angle = GLOBAL_PORSCHE.wheel_angles[1];
         var G = GLOBAL_PORSCHE.G;
@@ -260,16 +290,19 @@ function calculateWheelSpeeds(speed) {
 		var front_left_wheel_speed = (omega * G) / Math.sin(wheel1_angle * Math.PI/180);
         var front_right_wheel_speed = (omega * G) / Math.sin(wheel2_angle * Math.PI/180);
 		
-		// And back wheels
-		var back_left_wheel_speed = omega * (GLOBAL_PORSCHE.R + (GLOBAL_PORSCHE.D2 / 2));
-		var back_right_wheel_speed = omega * (GLOBAL_PORSCHE.R - (GLOBAL_PORSCHE.D2 / 2));
+		var back_right_wheel_speed = omega * (R - (GLOBAL_PORSCHE.D2/2));
+        var back_left_wheel_speed = omega * (R + (GLOBAL_PORSCHE.D2/2));
 
-        GLOBAL_PORSCHE.wheel_speeds = 
-		[Math.round(front_left_wheel_speed),
-		Math.round(front_right_wheel_speed),
-		Math.round(back_left_wheel_speed),
-		Math.round(back_right_wheel_speed)];
+        GLOBAL_PORSCHE.wheel_speeds = [Math.round(front_left_wheel_speed), Math.round(speed), 
+            Math.round(back_left_wheel_speed), Math.round(back_right_wheel_speed)];
+
+        calculateVehicleSpeed(omega, R);
     }
+}
+
+function calculateVehicleSpeed(omega, R) {
+    var velocity = omega * R;
+    GLOBAL_PORSCHE.velocity = velocity;
 }
   /*
     https://www.w3schools.com/howto/howto_js_image_zoom.asp
