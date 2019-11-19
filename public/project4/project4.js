@@ -134,8 +134,8 @@ class Porsche {
         var cos = Math.cos(heading_in_radians);
         var sin = Math.sin(heading_in_radians);
 
-        x = (this.velocity/75) * cos;
-        y = (this.velocity/75) * sin;
+        x = (this.velocity/30) * cos;
+        y = (this.velocity/30) * sin;
 
 
         if(this.pos[0] + x && this.pos[1] + y) {
