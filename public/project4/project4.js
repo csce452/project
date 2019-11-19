@@ -185,6 +185,7 @@ function updateAngle(e) {
     var angle = Math.atan2(e.pageX - x_center_of_steering_wheel, -(e.pageY - y_center_of_steering_wheel))*(180/Math.PI);
     
     calculateWheelAlphas(angle, steering_wheel);
+	updateSpeed(e);
 }
 
 /*
@@ -311,7 +312,7 @@ function calculateVehicleSpeed(omega, R) {
     GLOBAL_PORSCHE.velocity = velocity;
     GLOBAL_PORSCHE.heading = (velocity/GLOBAL_PORSCHE.G) * Math.tan(ALPHA_MIDDLE * Math.PI/180) * 180/Math.PI;
 
-    console.log(GLOBAL_PORSCHE.heading);
+    //console.log(GLOBAL_PORSCHE.heading);
 }
   /*
     https://www.w3schools.com/howto/howto_js_image_zoom.asp
