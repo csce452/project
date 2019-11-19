@@ -335,35 +335,34 @@ function writeToLog(wheel_angle, car_speed, pos_x, pos_y) {
 	// Message format: "velocity,angle|x,y;"
 	var logMessage = "" + car_speed + "," + wheel_angle + "|" + pos_x + "," + pos_y + ";";
 	// TODO: Append this to an element somewhere
-	console.log(logMessage); // TODO
-}
-
-function runFromLog() {
-	// TODO: Get log text from an element somehow
-	var logText = "";
-	runFromLog(logText);
+	//console.log(logMessage); // TODO
+	document.getElementById("loggyloglog").value += logMessage;
 }
 
 // Pulls text from a text input box, parses it, and starts playing it back
 // on the simulator itself.
-function runFromLog(logText) {
+function runFromLog() {
+	// TODO: Get log text from an element somehow
+	var logText = "" + document.getElementById("loggyloglog").value;
+	console.log(logText);
+
 	// Thought: log text should be in the format "velocity,angle|x,y;velocity,angle|x,y;velocity,angle|x,y;..."
 	// e.g. "20,0.1|800,400;21,0.2|801,401;20,0.15|802,402;..."
 	
 	// Step 1: Parse log text into individual pieces
-	var loggedData = split(";");
+	var loggedData = logText.split(";");
 	
 	// Step 2: Split each piece into "velocity,angle" and "x,y"
 	// and put all of these into a position array
 	for (var i = 0; i < loggedData.length; i++) {
-		var dataPiece = split("|");
+		var dataPiece = loggedData[i].split("|");
 		// dataPiece[0] is the vehicle velocity,heading
 		// dataPiece[1] is the vehicle x,y
 		
 		// Put the velocity,heading into loadedLog array
 		// and the x,y into the trajectory array
-		loadedLog.push(dataPiece[0]);
-		loadedTrajectory.push(dataPiece[1]);
+		loadedLog.push("" + dataPiece[0]);
+		loadedTrajectory.push("" + dataPiece[1]);
 	}
 	
 	loadedLog.reverse();
@@ -375,9 +374,7 @@ function runFromLog(logText) {
 	
 	// Step 4: Start running through the log
 	console.log("Starting playback from log...");
-	running = setInterval(() => {
-		logPlayback();
-    }, 100);
+	running = setInterval("logPlayback()", 100);
 }
 
 // Parses and displays every trajectory point in loadedTrajectory.
