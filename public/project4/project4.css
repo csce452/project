@@ -186,3 +186,11 @@ h3:last-child {
     bottom: 0px;
     right: 0px;
 }
+
+.circle {
+	position: relative;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background-color: #FFF;
+}

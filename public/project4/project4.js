@@ -411,5 +411,20 @@ function displayTrajectory() {
 		// Put something on the screen canvas to represent it
 		
 		// TODO: I am not so good with this!
+		bloop(x_coord, y_coord);
 	}
+}
+
+var paint;
+
+function bloop(dot_x, dot_y) {
+    var dot = document.createElement("div");
+    dot.id = "dot-window";
+    dot.className = "circle";
+    dot.style.position = "absolute";
+
+    dot.style.left = dot_x + 'px';
+    dot.style.top = dot_y + 'px';
+        
+    document.getElementById("window").append(dot);
 }
