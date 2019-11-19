@@ -134,42 +134,16 @@ class Porsche {
         x = this.velocity*Math.cos(cos);
         y = this.velocity*Math.sin(sin);
 
-        //console.log(x, y);
         if(this.pos[0] + x && this.pos[1] + y) {
-            this.pos[0] = this.pos[0] + x;
-            this.pos[1] = this.pos[1] + y;
+            this.pos[0] = this.pos[0] - x;
+            this.pos[1] = this.pos[1] - y;
 
             porsche.style.top = this.pos[1] + 'px';
             porsche.style.left = this.pos[0] + 'px';
 
             // maybe also change angle of the car HTML document
-            console.log(porsche.getBoundingClientRect().x, porsche.getBoundingClientRect().y);
+            porsche.style.transform = `rotate(${this.heading}deg)`;
         }   
-
-        //this.pos[0] = parseInt(this.pos[0]) + x; 
-        //this.pos[1] = parseInt(this.pos[1]) + y;
-
-        //console.log("x:", x, "y:", y, "heading:", this.heading, "velocity:", this.velocity);
-
-
-        // porsche.style.left = x;
-        // porsche.style.top = y;
-
-        // let center_x = this.pos[0] - this.R * Math.cos(this.heading);
-        // let center_y = this.pos[1] + this.R * Math.sin(this.heading);
-
-        //console.log(this.pos[0], this.pos[1], this.velocity, this.heading);
-
-        // let center_x = this.pos[0] * Math.cos(this.heading);
-        // let center_y = this.pos[1] * Math.sin(this.heading);
-
-        //console.log(center_x, center_y);
-
-        // x = Math.cos(this.heading) * (this.x - center_x) - Math.sin(this.heading) * (this.pos[0] - center_y) + center_x;
-        // y = Math.sin(this.eading) * (this.x - center_x) + Math.cos(this.heading) * (this.pos[1] - center_y) + center_y;
-
-        //console.log(x, y);
-    
     }
 } 
 
