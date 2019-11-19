@@ -339,6 +339,28 @@ function writeToLog(wheel_angle, car_speed, pos_x, pos_y) {
 	document.getElementById("loggyloglog").value += logMessage;
 }
 
+function logPlayback() {
+    // Sanity check first
+    if (loadedLog.length <= 0) {
+        // There's no more to play back!
+        clearInterval(logPlayback);
+        logPlayback = null;
+        console.log("Log playback ended.");
+        return;
+    }
+
+    // Get the data to compute this iteration
+    var logPiece = loadedLog.pop().split(","); // This is why I reversed it!
+
+    // logPiece[0] is the velocity, logPiece[1] is the angle
+    var carVelocity = parseFloat(logPiece[0]);
+    var carAngle = parseFloat(logPiece[1]);
+
+    // Send these two data pieces to the correct areas, and
+    // have the functions we already built do the calculation and "playback"
+    // TODO TODO TODO
+}
+
 // Pulls text from a text input box, parses it, and starts playing it back
 // on the simulator itself.
 function runFromLog() {
@@ -374,9 +396,9 @@ function runFromLog() {
 	
 	// Step 4: Start running through the log
 	console.log("Starting playback from log...");
-	running = setInterval(function () {
-			logPlayback();
-		}, 100);
+	running = function(){
+        setInterval(logPlayback, 100);
+    }
 }
 
 // Parses and displays every trajectory point in loadedTrajectory.
@@ -390,26 +412,4 @@ function displayTrajectory() {
 		
 		// TODO: I am not so good with this!
 	}
-}
-
-function logPlayback() {
-	// Sanity check first
-	if (loadedLog.length <= 0) {
-		// There's no more to play back!
-		clearInterval(logPlayback);
-		logPlayback = null;
-		console.log("Log playback ended.");
-		return;
-	}
-	
-	// Get the data to compute this iteration
-	var logPiece = loadedLog.pop().split(","); // This is why I reversed it!
-	
-	// logPiece[0] is the velocity, logPiece[1] is the angle
-	var carVelocity = parseFloat(logPiece[0]);
-	var carAngle = parseFloat(logPiece[1]);
-	
-	// Send these two data pieces to the correct areas, and
-	// have the functions we already built do the calculation and "playback"
-	// TODO TODO TODO
 }
