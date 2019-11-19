@@ -305,6 +305,8 @@ function calculateVehicleSpeed(omega, R) {
     var velocity = omega * R;
     GLOBAL_PORSCHE.velocity = velocity;
     GLOBAL_PORSCHE.heading = (velocity/GLOBAL_PORSCHE.G) * Math.tan(ALPHA_MIDDLE * Math.PI/180) * 180/Math.PI;
+
+    console.log(GLOBAL_PORSCHE.heading);
 }
   /*
     https://www.w3schools.com/howto/howto_js_image_zoom.asp
