@@ -329,16 +329,23 @@ logPlayback = false;
 
 // Writes the current Porsche instant data to a log.
 function writeToLog(wheel_angle, car_speed, pos_x, pos_y) {
+	if (car_speed == 0) return; // Don't log if the car isn't moving
+	
 	// Message format: "velocity,angle|x,y;"
 	var logMessage = "" + car_speed + "," + wheel_angle + "|" + pos_x + "," + pos_y + ";";
 	// TODO: Append this to an element somewhere
+	console.log(logMessage); // TODO
+}
+
+function runFromLog() {
+	// TODO: Get log text from an element somehow
+	var logText = "";
+	runFromLog(logText);
 }
 
 // Pulls text from a text input box, parses it, and starts playing it back
 // on the simulator itself.
-function runFromLog() {
-	// TODO: Get log text from an element somehow
-	var logText = "";
+function runFromLog(logText) {
 	// Thought: log text should be in the format "velocity,angle|x,y;velocity,angle|x,y;velocity,angle|x,y;..."
 	// e.g. "20,0.1|800,400;21,0.2|801,401;20,0.15|802,402;..."
 	
