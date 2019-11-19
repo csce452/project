@@ -374,7 +374,9 @@ function runFromLog() {
 	
 	// Step 4: Start running through the log
 	console.log("Starting playback from log...");
-	running = setInterval("logPlayback()", 100);
+	running = setInterval(function () {
+			logPlayback();
+		}, 100);
 }
 
 // Parses and displays every trajectory point in loadedTrajectory.
