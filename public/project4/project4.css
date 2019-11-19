@@ -25,7 +25,7 @@ html, body {
 
 .img-zoom-lens {
     position: absolute;
-    border: 1px solid #d4d4d4;
+    /* border: 1px solid #d4d4d4; */
     /*set the size of the lens:*/
     width: 80px;
     height: 80px;
@@ -161,4 +161,28 @@ h3:last-child {
     font-family: 'VT323', monospace;
     color: #FFFFFF;
     font-size: 20px;
+}
+
+#wheel1-info-angle {
+    position: absolute;
+    top: 35%;
+    left: 20%;
+    font-family: 'VT323', monospace;
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+#wheel2-info-angle {
+    position: absolute;
+    top: 35%;
+    right: 15%;
+    font-family: 'VT323', monospace;
+    color: #FFFFFF;
+    font-size: 20px;
+}
+
+#wheel-fake-speed {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
 }
