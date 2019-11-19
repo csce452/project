@@ -16,6 +16,7 @@ class Porsche {
     run() {
         this.drawMap();
         this.displayWheelInfo();
+		writeToLog(this.velocity, this.heading); // Write this data to the "log"
     }
 
     /* Draws the zoomed-in image on the top right corner of the screen */
@@ -277,3 +278,60 @@ function calculateWheelSpeeds(speed) {
     https://www.w3schools.com/jsref/met_element_queryselector.asp
     https://www.xarg.org/book/kinematics/ackerman-steering/
   */
+
+// ********** Log Writing/Reading/Playback **********
+
+loadedLog = [];
+logPlayback = false;
+
+// Writes the current Porsche instant data to a log.
+function writeToLog(wheel_angle, car_speed) {
+	var logMessage = "" + car_speed + "," + wheel_angle + ";";
+	// TODO: Append this to an element somewhere
+}
+
+// Pulls text from a text input box, parses it, and starts playing it back
+// on the simulator itself.
+function runFromLog() {
+	// TODO: Get log text from an element somehow
+	var logText = "";
+	// Thought: log text should be in the format "velocity,angle;velocity,angle;velocity,angle;..."
+	// e.g. "20,0.1;21,0.2;20,0.15;..."
+	
+	// Step 1: Parse log text into individual pieces
+	var loggedData = split(";");
+	
+	// Step 2: Reverse the array (I know that seems stupid, but bear with me)
+	loggedData.reverse();
+	
+	// Step 3: Set the array
+	loadedLog = loggedData;
+	
+	// Step 4: Start running through the log
+	console.log("Starting playback from log...");
+	running = setInterval(() => {
+		logPlayback();
+    }, 100);
+}
+
+function logPlayback() {
+	// Sanity check first
+	if (loadedLog.length <= 0) {
+		// There's no more to play back!
+		clearInterval(logPlayback);
+		logPlayback = null;
+		console.log("Log playback ended.");
+		return;
+	}
+	
+	// Get the data to compute this iteration
+	var logPiece = loadedLog.pop().split(","); // This is why I reversed it!
+	
+	// logPiece[0] is the velocity, logPiece[1] is the angle
+	var carVelocity = parseFloat(logPiece[0]);
+	var carAngle = parseFloat(logPiece[1]);
+	
+	// Send these two data pieces to the correct areas, and
+	// have the functions we already built do the calculation and "playback"
+	// TODO TODO TODO
+}
