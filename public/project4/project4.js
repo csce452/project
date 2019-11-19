@@ -282,11 +282,13 @@ function calculateWheelSpeeds(speed) {
 // ********** Log Writing/Reading/Playback **********
 
 loadedLog = [];
+loadedTrajectory = [];
 logPlayback = false;
 
 // Writes the current Porsche instant data to a log.
-function writeToLog(wheel_angle, car_speed) {
-	var logMessage = "" + car_speed + "," + wheel_angle + ";";
+function writeToLog(wheel_angle, car_speed, pos_x, pos_y) {
+	// Message format: "velocity,angle|x,y;"
+	var logMessage = "" + car_speed + "," + wheel_angle + "|" + pos_x + "," + pos_y + ";";
 	// TODO: Append this to an element somewhere
 }
 
@@ -295,16 +297,29 @@ function writeToLog(wheel_angle, car_speed) {
 function runFromLog() {
 	// TODO: Get log text from an element somehow
 	var logText = "";
-	// Thought: log text should be in the format "velocity,angle;velocity,angle;velocity,angle;..."
-	// e.g. "20,0.1;21,0.2;20,0.15;..."
+	// Thought: log text should be in the format "velocity,angle|x,y;velocity,angle|x,y;velocity,angle|x,y;..."
+	// e.g. "20,0.1|800,400;21,0.2|801,401;20,0.15|802,402;..."
 	
 	// Step 1: Parse log text into individual pieces
 	var loggedData = split(";");
 	
-	// Step 2: Reverse the array (I know that seems stupid, but bear with me)
-	loggedData.reverse();
+	// Step 2: Split each piece into "velocity,angle" and "x,y"
+	// and put all of these into a position array
+	for (var i = 0; i < loggedData.length; i++) {
+		var dataPiece = split("|");
+		// dataPiece[0] is the vehicle velocity,heading
+		// dataPiece[1] is the vehicle x,y
+		
+		// Put the velocity,heading into loadedLog array
+		// and the x,y into the trajectory array
+		loadedLog.push(dataPiece[0]);
+		loadedTrajectory.push(dataPiece[1]);
+		// The arrays are backwards at this point, but it
+		// fixes itself because we can just repeatedly pop()
+		// them to make it seem "ordered" again.
+	}
 	
-	// Step 3: Set the array
+	// Step 3: Visually load the trajectory from loadedTrajectory
 	loadedLog = loggedData;
 	
 	// Step 4: Start running through the log
@@ -312,6 +327,19 @@ function runFromLog() {
 	running = setInterval(() => {
 		logPlayback();
     }, 100);
+}
+
+// Parses and displays every trajectory point in loadedTrajectory.
+function displayTrajectory() {
+	for (var i = 0; i < loadedTrajectory.length; i++) {
+		var coordinates = loadedTrajectory[i].split(",");
+		var x_coord = parseFloat(coordinates[0]);
+		var y_coord = parseFloat(coordinates[1]);
+		// Now we have (x,y) of a point along the car's trajectory.
+		// Put something on the screen canvas to represent it
+		
+		// TODO: I am not so good with this!
+	}
 }
 
 function logPlayback() {
