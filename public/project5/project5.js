@@ -16,6 +16,8 @@ function handleClick(e) {
 		placeDest(x,y);
 	} else {
 		console.log("Everything already placed")
+		// Testing to check the inside a div function
+		console.log("Inside box: ", inABox(x,y));
 	}
 }
 
@@ -56,4 +58,16 @@ function placeDest (x, y) {
 
 	var window = document.getElementById(`window`);
 	window.appendChild(dest);
+}
+
+function inABox (x, y) {
+	let inBox = false;
+	blocks.forEach(block => {
+		let rect = block.getBoundingClientRect();
+		if (y > rect.top && y < rect.bottom && x > rect.left && x < rect.right) {
+			inBox = true;
+			return;
+		}
+	})
+	return inBox;
 }
