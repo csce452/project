@@ -1,6 +1,7 @@
 let blocks = []
 let start = null;
 let dest = null;
+const CELL_DIVISION = 50;
 
 function handleClick(e) {
 	let x = e.pageX;
@@ -17,7 +18,8 @@ function handleClick(e) {
 	} else {
 		console.log("Everything already placed")
 		// Testing to check the inside a div function
-		console.log("Inside box: ", inABox(x,y));
+		let g = new Graph();
+		g.navigate();
 	}
 }
 
@@ -70,4 +72,76 @@ function inABox (x, y) {
 		}
 	})
 	return inBox;
+}
+
+class Graph {
+	available = [];
+	constructor () {
+		let d = this.getCell(dest.offsetLeft, dest.offsetTop);
+		for (let i = 0; i < 500; i+= CELL_DIVISION) {
+			let row = [];
+			for(let j = 0; j < 500; j+= CELL_DIVISION) {
+				if (inABox(i, j)) {
+					row.push(999);
+				} else {
+					row.push(this.getDist(this.getCell(i,j),d));
+				}
+			}
+			this.available.push(row);
+		}
+		//this.available[d[0]][d[1]] = 2;
+		console.log(this.available);
+	}
+
+	getDist(pos1, pos2) {
+		let d = Math.floor(Math.sqrt(Math.pow(pos1[0] - pos2[0], 2) + Math.pow(pos1[1] - pos2[1], 2)));
+		// console.log("Dist between ",pos1, pos2, d)
+		return d;
+	}
+
+	getCell (x, y) {
+		// Get the graph placement given an x and y
+		return [Math.floor(x/CELL_DIVISION), Math.floor(y/CELL_DIVISION)];
+	}	
+
+	navigate () {
+		let s = this.getCell(start.offsetLeft, start.offsetTop);
+		let d = this.getCell(dest.offsetLeft, dest.offsetTop);
+		console.log(s);
+		console.log(d);
+
+		let path = [];
+		let shortest_path = [];
+
+		let toVisit = [s]
+		this.available[s[0]][s[1]] = 999;
+		while (toVisit.length !== 0) {
+			// for neighbors
+			
+			this.getNeighbors.forEach(n => {
+				if (this.available[n[0]][n[1]] !== 999) {
+					this.available[n[0]][n[1]] = 999;
+					toVisit.push(n);
+				}
+				this.available
+			});
+			// set to 999
+			// put into toVisit
+			// order?? 
+		}
+	}
+
+	getNeighbors (x, y) {
+		let neighbors = [];
+		let max = 500 / CELL_DIVISION;
+		if (x+1 < max && y+1 < max) 
+			neighbors.push([x+1, y+1]);
+		if (x-1 > 0 && y+1 < max) 
+			neighbors.push([x-1, y+1]);
+		if (x+1 < max && y-1 > 0) 
+			neighbors.push([x+1, y-1]);
+		if (x-1 > 0 && y-1 > 0) 
+			neighbors.push([x-1, y-1]);
+		return neighbors;
+	}
 }
