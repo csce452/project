@@ -208,7 +208,7 @@ class Graph {
 			let p = document.createElement("div");
 			p.classList.add('path');
 			p.style.position = "absolute";
-			p.style.left = (n.x_range[0] * CELL_DIVISION) + 'px';
+			p.style.left = (n.x_range[0] * CELL_DIVISION +1 ) + 'px';
 			p.style.top = (n.y_range[0] * CELL_DIVISION) + 'px';
 			p.style.height = ((n.y_range[1] - n.y_range[0]) * CELL_DIVISION) + 'px';
 			p.style.width = ((n.x_range[1] - n.x_range[0]) * CELL_DIVISION) + 'px';
