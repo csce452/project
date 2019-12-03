@@ -1,7 +1,7 @@
 let blocks = []
 let start = null;
 let dest = null;
-const CELL_DIVISION = 10;
+const CELL_DIVISION = 5;
 
 function handleClick(e) {
 	let x = e.pageX;
@@ -184,7 +184,6 @@ class Graph {
 
 		for (let count = 0; count < keys.length - 1; count++) {
 			let u = this.minIndex(distances, set);
-			console.log("min index: ", u);
 			set[u] = true;
 
 			keys.forEach(v => {
