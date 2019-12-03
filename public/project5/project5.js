@@ -74,23 +74,57 @@ function inABox (x, y) {
 	return inBox;
 }
 
+class Node {
+	constructor (key_, x_range_, y_range_) {
+		this.key = key_;
+		this.x_range = x_range_;
+		this.y_range = y_range_;
+		this.neighbors = [];
+	}
+
+	addNeighbor(neighbor) {
+		this.neighbors.push(neighbor);
+	}
+}
+
 class Graph {
-	available = [];
+	nodes = {};
 	constructor () {
-		let d = this.getCell(dest.offsetLeft, dest.offsetTop);
-		for (let i = 0; i < 500; i+= CELL_DIVISION) {
-			let row = [];
-			for(let j = 0; j < 500; j+= CELL_DIVISION) {
-				if (inABox(i, j)) {
-					row.push(999);
-				} else {
-					row.push(this.getDist(this.getCell(i,j),d));
+		for (let i = 0; i < 500/CELL_DIVISION; i++) {
+			let ranges = [];
+			let range_start = undefined;
+			
+			let j = 0;
+			for(; j < 500/CELL_DIVISION; j++) {
+				if (!inABox(i*CELL_DIVISION,j*CELL_DIVISION) && range_start === undefined) {
+					// start of range
+					range_start = j;
+				}
+				if (inABox(i*CELL_DIVISION,j*CELL_DIVISION) && range_start !== undefined) {
+					// end of range
+					ranges.push([range_start, j]);
+					range_start = undefined;
 				}
 			}
-			this.available.push(row);
+			if (range_start !== undefined) {
+				ranges.push([range_start, j]);
+			}
+			ranges.forEach(range => {
+				let key = (i*100) + range[0];
+				let node = new Node(key, [i, i+1], range);
+				Object.values(this.nodes).forEach(n => {
+					if (Math.floor(n.key/100) === i-1) {
+						// Is in row above
+						if ((n.y_range[0] <= range[0] && n.y_range[1] > range[0]) || (n.y_range[1] >= range[1] && n.y_range[0] < range[1]) ){
+							n.neighbors.push(key);
+							node.neighbors.push(n.key);
+						}
+					}
+				});
+				this.nodes[key] = node;
+			})
 		}
-		//this.available[d[0]][d[1]] = 2;
-		console.log(this.available);
+		console.log(this.nodes);
 	}
 
 	getDist(pos1, pos2) {
@@ -101,47 +135,24 @@ class Graph {
 
 	getCell (x, y) {
 		// Get the graph placement given an x and y
-		return [Math.floor(x/CELL_DIVISION), Math.floor(y/CELL_DIVISION)];
+		let i = Math.floor(x/CELL_DIVISION);
+		let j = Math.floor(y/CELL_DIVISION);
+		console.log(i, j);
+		let key = null;
+		Object.values(this.nodes).forEach(n => {
+			// console.log(n.x_range, n.y_range)
+			if (n.x_range[0] <= i && n.x_range[1] >= i && n.y_range[0] <= j && n.y_range[1] >= j) {
+				key = n.key;
+			}
+		});
+		return key;
 	}	
 
 	navigate () {
 		let s = this.getCell(start.offsetLeft, start.offsetTop);
 		let d = this.getCell(dest.offsetLeft, dest.offsetTop);
-		console.log(s);
-		console.log(d);
-
-		let path = [];
-		let shortest_path = [];
-
-		let toVisit = [s]
-		this.available[s[0]][s[1]] = 999;
-		while (toVisit.length !== 0) {
-			// for neighbors
-			
-			this.getNeighbors.forEach(n => {
-				if (this.available[n[0]][n[1]] !== 999) {
-					this.available[n[0]][n[1]] = 999;
-					toVisit.push(n);
-				}
-				this.available
-			});
-			// set to 999
-			// put into toVisit
-			// order?? 
-		}
-	}
-
-	getNeighbors (x, y) {
-		let neighbors = [];
-		let max = 500 / CELL_DIVISION;
-		if (x+1 < max && y+1 < max) 
-			neighbors.push([x+1, y+1]);
-		if (x-1 > 0 && y+1 < max) 
-			neighbors.push([x-1, y+1]);
-		if (x+1 < max && y-1 > 0) 
-			neighbors.push([x+1, y-1]);
-		if (x-1 > 0 && y-1 > 0) 
-			neighbors.push([x-1, y-1]);
-		return neighbors;
+		
+		// Djikstras from s to d
+		// this.nodes is the graph
 	}
 }
