@@ -1,7 +1,7 @@
 let blocks = []
 let start = null;
 let dest = null;
-const CELL_DIVISION = 50;
+const CELL_DIVISION = 10;
 
 function handleClick(e) {
 	let x = e.pageX;
@@ -80,6 +80,7 @@ class Node {
 		this.x_range = x_range_;
 		this.y_range = y_range_;
 		this.neighbors = [];
+		this.center_y = Math.abs(this.y_range[0] - this.y_range[1]);
 	}
 
 	addNeighbor(neighbor) {
@@ -148,11 +149,74 @@ class Graph {
 		return key;
 	}	
 
+	minIndex (distances, set) {
+		let min = 9999;
+		let min_key;
+
+		Object.keys(this.nodes).forEach(n => {
+			if (distances[n] < min && set[n] === false) {
+				min_key = n;
+				min = distances[n];
+			}
+		});
+
+		return min_key;
+	}
+
 	navigate () {
 		let s = this.getCell(start.offsetLeft, start.offsetTop);
 		let d = this.getCell(dest.offsetLeft, dest.offsetTop);
+		let keys = Object.keys(this.nodes);
 		
 		// Djikstras from s to d
 		// this.nodes is the graph
+		let set = {};
+		let distances = {};
+		let path = {};
+
+		keys.forEach(key => {
+			set[key] = false;
+			distances[key] = 9999;
+			path[key] = [];
+		});
+
+		distances[s] = 0;
+
+		for (let count = 0; count < keys.length - 1; count++) {
+			let u = this.minIndex(distances, set);
+			console.log("min index: ", u);
+			set[u] = true;
+
+			keys.forEach(v => {
+				if (set[v] === false && this.nodes[v].neighbors.includes(parseInt(u)) && distances[u] !== 9999) {
+					let d = Math.abs(this.nodes[v].center_y - this.nodes[u].center_y);
+					if (d + distances[u] < distances[v]) {
+						distances[v] = distances[u] + d;
+						path[v] = JSON.parse(JSON.stringify(path[u]));
+						path[v].push(u);
+					}
+				}
+			})
+		}
+
+		console.log("Path: ", path[d]);
+		this.showPath(path[d])
 	}
+
+	showPath (path) {
+		path.forEach(key => {
+			let n = this.nodes[key];
+			let p = document.createElement("div");
+			p.classList.add('path');
+			p.style.position = "absolute";
+			p.style.left = (n.x_range[0] * CELL_DIVISION) + 'px';
+			p.style.top = (n.y_range[0] * CELL_DIVISION) + 'px';
+			p.style.height = ((n.y_range[1] - n.y_range[0]) * CELL_DIVISION) + 'px';
+			p.style.width = ((n.x_range[1] - n.x_range[0]) * CELL_DIVISION) + 'px';
+
+			var window = document.getElementById(`pathPlacement`);
+			window.appendChild(p);
+		})
+	}
+
 }
